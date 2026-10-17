@@ -133,6 +133,7 @@ for (int i = 0; i < n; i++) { Do(i); }        // zbędne klamry i instrukcja w t
 
 - **Eventy (`public event ...`) deklarujemy na samej górze klasy**, przed polami, właściwościami i metodami.
 - Dalej, w tej kolejności: pola serializowane, pozostałe pola prywatne, właściwości, metody.
+- **Stany podglądane w Inspectorze** (pola z `[ShowNonSerializedField]`, właściwości z `[ShowNativeProperty]`) grupujemy razem i poprzedzamy nagłówkiem `States`: `[Header("States")]` nad pierwszym polem. `[Header]` działa tylko na polach — gdy blok zaczyna się od właściwości, użyj komentarza `// States`.
 
 ```csharp
 public class ModeController : MonoBehaviour
@@ -143,8 +144,11 @@ public class ModeController : MonoBehaviour
     [SerializeField]
     private InputActionReference toggleAction;
 
+    [Header("States")]
+    [ShowNonSerializedField]
     private int lastTickSecond;
 
+    [ShowNativeProperty]
     public FilmMode Mode { get; private set; }
 
     private void Awake() { ... }
