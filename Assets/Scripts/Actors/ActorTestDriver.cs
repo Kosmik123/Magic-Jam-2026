@@ -1,25 +1,24 @@
-using MagicJam.CameraSystem;
+using MagicJam.Interaction;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace MagicJam.Actors
 {
     /// <summary>
-    /// Test-scene stand-in for ShotDetector and ModeController, so the actor can be tested in isolation.
-    /// Space: Action/Cut, R: retake, 0-5: shot (None, Wide, Full, American, Medium, Detail),
-    /// [ / ]: previous/next focus target.
+    /// Test-scene driver that sends commands to the actor directly, so it can be tested in isolation.
+    /// Space: Action/Cut, R: retake, G: go to target, I: interact with target, F: flee from target,
+    /// [ / ]: previous/next target.
     /// </summary>
     public class ActorTestDriver : MonoBehaviour
     {
         [SerializeField] private ActorController actor;
-        [Tooltip("Objects that can be put in focus (Interactables, NavPoints).")]
-        [SerializeField] private Transform[] focusTargets;
+        [Tooltip("Command targets (Interactables, NavPoints or plain transforms).")]
+        [SerializeField] private Transform[] targets;
 
-        private ShotType shot = ShotType.Wide;
-        private int focusIndex;
+        private int targetIndex;
 
-        private Transform Focus =>
-            focusTargets != null && focusTargets.Length > 0 ? focusTargets[focusIndex] : null;
+        private Transform Target =>
+            targets != null && targets.Length > 0 ? targets[targetIndex] : null;
 
         private void Update()
         {
@@ -35,21 +34,26 @@ namespace MagicJam.Actors
             if (keyboard.rKey.wasPressedThisFrame)
                 actor.Retake();
 
-            if (keyboard.digit0Key.wasPressedThisFrame) shot = ShotType.None;
-            if (keyboard.digit1Key.wasPressedThisFrame) shot = ShotType.Wide;
-            if (keyboard.digit2Key.wasPressedThisFrame) shot = ShotType.Full;
-            if (keyboard.digit3Key.wasPressedThisFrame) shot = ShotType.American;
-            if (keyboard.digit4Key.wasPressedThisFrame) shot = ShotType.Medium;
-            if (keyboard.digit5Key.wasPressedThisFrame) shot = ShotType.Detail;
+            int count = targets != null ? targets.Length : 0;
+            if (count == 0)
+                return;
 
-            int count = focusTargets != null ? focusTargets.Length : 0;
-            if (count > 0)
+            if (keyboard.rightBracketKey.wasPressedThisFrame) targetIndex = (targetIndex + 1) % count;
+            if (keyboard.leftBracketKey.wasPressedThisFrame) targetIndex = (targetIndex + count - 1) % count;
+
+            var target = Target;
+            if (target == null)
+                return;
+
+            if (keyboard.gKey.wasPressedThisFrame)
             {
-                if (keyboard.rightBracketKey.wasPressedThisFrame) focusIndex = (focusIndex + 1) % count;
-                if (keyboard.leftBracketKey.wasPressedThisFrame) focusIndex = (focusIndex + count - 1) % count;
+                var navPoint = target.GetComponent<NavPoint>();
+                actor.GoTo(navPoint != null ? navPoint.Destination.position : target.position);
             }
-
-            actor.SetShot(shot, Focus);
+            if (keyboard.iKey.wasPressedThisFrame)
+                actor.Interact(target.GetComponent<Interactable>());
+            if (keyboard.fKey.wasPressedThisFrame)
+                actor.FleeFrom(target.position);
         }
 
         private void OnGUI()
@@ -58,11 +62,11 @@ namespace MagicJam.Actors
                 return;
 
             string held = actor.HeldItem != null ? actor.HeldItem.name : "-";
-            string focus = Focus != null ? Focus.name : "-";
+            string target = Target != null ? Target.name : "-";
             GUI.Label(new Rect(10, 10, 600, 120),
                 $"Mode: {(actor.IsInAction ? "AKCJA" : "CIĘCIE")}   State: {actor.State}   Ready: {actor.IsReady}\n" +
-                $"Shot: {shot}   Focus: {focus}   Held: {held}\n" +
-                "Space Akcja/Cięcie | R dubel | 0-5 plan | [ ] fokus");
+                $"Target: {target}   Held: {held}\n" +
+                "Space Akcja/Cięcie | R dubel | G idź | I interakcja | F ucieczka | [ ] cel");
         }
     }
 }
