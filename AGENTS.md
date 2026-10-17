@@ -2,6 +2,12 @@
 
 Instrukcje dla agentów AI (Claude Code, Codex, Copilot itp.) i dla ludzi dołączających do projektu.
 
+## Pytanie ≠ polecenie
+
+- **Gdy użytkownik zadaje pytanie, odpowiedz na nie i nic nie zmieniaj.** Nie edytuj plików, nie commituj, nie wprowadzaj zmian „przy okazji”. Czytać kod wolno, żeby odpowiedzieć.
+- **Działaj dopiero na wyraźne polecenie** („zrób”, „dodaj”, „popraw”, „zacommituj” itp.).
+- Jeśli w odpowiedzi proponujesz zmianę, opisz ją i poczekaj na decyzję.
+
 ## O projekcie
 
 - **Gra:** „Cięcie!” (robocza nazwa) — Game Jam 24h, temat *Beyond Reality*. Opis gry, mechaniki i zakres: [gdd.md](gdd.md). Przeczytaj GDD przed implementowaniem nowych mechanik.
