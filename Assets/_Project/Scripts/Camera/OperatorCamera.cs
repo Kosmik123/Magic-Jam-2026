@@ -7,6 +7,8 @@ namespace MagicJam.CameraSystem
     /// Free-moving film camera operated by the player.
     /// WASD moves on the horizontal plane, mouse rotates while the middle button is held, Q/E lowers/raises, scroll zooms (changes FOV).
     /// Movement is clamped to a room bounds box and blocked by colliders on the collision mask.
+    /// With a focus set, W/S move toward/away from it and A/D orbit around it (the camera keeps looking at it);
+    /// rotating with the mouse clears the focus and returns to free movement.
     /// </summary>
     [RequireComponent(typeof(Camera))]
     public class OperatorCamera : MonoBehaviour
@@ -64,6 +66,15 @@ namespace MagicJam.CameraSystem
         [SerializeField]
         private float zoomSmoothTime = 0.1f;
 
+        [Header("Focus")]
+        [Tooltip("Optional. While set, W/S approach/retreat and A/D orbit around this object. Cleared when the camera is rotated with the mouse.")]
+        [SerializeField]
+        private Transform focus;
+
+        [Tooltip("Closest the camera can get to the focus (horizontal distance).")]
+        [SerializeField]
+        private float minFocusDistance = 0.5f;
+
         [Header("Bounds & Collision")]
         [Tooltip("Box the camera must stay inside (usually the room volume). Optional.")]
         [SerializeField]
@@ -92,6 +103,9 @@ namespace MagicJam.CameraSystem
         private bool isRotating;
 
         public Camera Camera => cam;
+
+        /// <summary>Object the camera orbits around, or null in free mode.</summary>
+        public Transform Focus => focus;
 
         /// <summary>When false, input is ignored (e.g. pause menu, scripted finale).</summary>
         public bool InputEnabled { get; set; } = true;
@@ -128,6 +142,22 @@ namespace MagicJam.CameraSystem
                 input ? Read<Vector2>(moveAction) : Vector2.zero,
                 input ? Read<float>(verticalAction) : 0f,
                 dt);
+
+            if (focus != null)
+                AimAtFocus();
+        }
+
+        /// <summary>Makes the camera look at and orbit around the target. Passing null returns to free mode.</summary>
+        public void SetFocus(Transform target)
+        {
+            focus = target;
+            if (focus != null)
+                AimAtFocus();
+        }
+
+        public void ClearFocus()
+        {
+            focus = null;
         }
 
         /// <summary>Instantly places the camera, e.g. at level start. Respects bounds.</summary>
@@ -156,6 +186,10 @@ namespace MagicJam.CameraSystem
 
         private void UpdateRotation(Vector2 look)
         {
+            // Rotating by hand takes the camera out of focus mode; it keeps its current orientation.
+            if (focus != null && look != Vector2.zero)
+                ClearFocus();
+
             yaw += look.x * lookSensitivity;
             pitch = Mathf.Clamp(pitch - look.y * lookSensitivity, minPitch, maxPitch);
             transform.rotation = Quaternion.Euler(pitch, yaw, 0f);
@@ -172,9 +206,7 @@ namespace MagicJam.CameraSystem
 
         private void UpdateMovement(Vector2 move, float vertical, float dt)
         {
-            // Horizontal movement follows yaw only, so looking up/down doesn't change height.
-            Quaternion yawRotation = Quaternion.Euler(0f, yaw, 0f);
-            Vector3 targetVelocity = yawRotation * new Vector3(move.x, 0f, move.y) * moveSpeed
+            Vector3 targetVelocity = GetHorizontalDirection(move) * moveSpeed
                                      + Vector3.up * (vertical * verticalSpeed);
 
             velocity = moveSmoothTime > 0f
@@ -185,6 +217,9 @@ namespace MagicJam.CameraSystem
             if (delta.sqrMagnitude < 1e-8f)
                 return;
 
+            if (focus != null)
+                delta = ToOrbitDelta(delta);
+
             Vector3 position = MoveWithCollision(transform.position, delta);
             Vector3 clamped = ClampToBounds(position);
 
@@ -193,6 +228,58 @@ namespace MagicJam.CameraSystem
                 velocity = Vector3.ProjectOnPlane(velocity, (position - clamped).normalized);
 
             transform.position = clamped;
+        }
+
+        private Vector3 GetHorizontalDirection(Vector2 move)
+        {
+            if (focus != null && TryGetFocusFrame(out Vector3 outward, out float _))
+                return -outward * move.y + Vector3.Cross(outward, Vector3.up) * move.x;
+
+            // Free mode follows yaw only, so looking up/down doesn't change height.
+            return Quaternion.Euler(0f, yaw, 0f) * new Vector3(move.x, 0f, move.y);
+        }
+
+        /// <summary>Horizontal direction from the focus to the camera and the distance along it.</summary>
+        private bool TryGetFocusFrame(out Vector3 outward, out float radius)
+        {
+            Vector3 offset = transform.position - focus.position;
+            offset.y = 0f;
+            radius = offset.magnitude;
+            outward = radius > 1e-4f ? offset / radius : Vector3.zero;
+            return radius > 1e-4f;
+        }
+
+        /// <summary>
+        /// Converts a free-space step into an orbit step: the component toward the focus changes the
+        /// distance, the sideways component becomes an arc around the focus, height is kept as is.
+        /// </summary>
+        private Vector3 ToOrbitDelta(Vector3 delta)
+        {
+            if (TryGetFocusFrame(out Vector3 outward, out float radius) == false)
+                return delta;
+
+            float approach = Vector3.Dot(delta, -outward);
+            float sideways = Vector3.Dot(delta, Vector3.Cross(outward, Vector3.up));
+
+            float newRadius = Mathf.Max(Mathf.Min(radius, minFocusDistance), radius - approach);
+            float angle = -sideways / radius * Mathf.Rad2Deg;
+            Vector3 newOffset = Quaternion.AngleAxis(angle, Vector3.up) * outward * newRadius;
+
+            Vector3 current = transform.position;
+            Vector3 target = new Vector3(focus.position.x + newOffset.x, current.y + delta.y, focus.position.z + newOffset.z);
+            return target - current;
+        }
+
+        private void AimAtFocus()
+        {
+            Vector3 direction = focus.position - transform.position;
+            if (direction.sqrMagnitude < 1e-6f)
+                return;
+
+            Vector3 euler = Quaternion.LookRotation(direction).eulerAngles;
+            yaw = euler.y;
+            pitch = Mathf.Clamp(NormalizeAngle(euler.x), minPitch, maxPitch);
+            transform.rotation = Quaternion.Euler(pitch, yaw, 0f);
         }
 
         private Vector3 MoveWithCollision(Vector3 from, Vector3 delta)
