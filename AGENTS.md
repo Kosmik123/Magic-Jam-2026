@@ -102,6 +102,33 @@ public float moveSpeed = 3f;                    // publiczne pole
 - Jeden typ publiczny na plik, nazwa pliku = nazwa klasy (wymóg Unity dla `MonoBehaviour`/`ScriptableObject`).
 - Komentarze i nazwy w kodzie po angielsku; `<summary>` dla publicznych klas i nieoczywistych członków.
 
+### Formatowanie instrukcji
+
+- **Instrukcja po `if` / `for` zawsze w osobnej linijce** — nigdy w tej samej linii co warunek.
+- **Jednolinijkowe ciało `if` / `for` piszemy bez klamer.** Klamry tylko dla ciał wieloliniowych.
+- **Negację w warunkach zapisujemy jako `== false`, nie przez `!`.**
+
+```csharp
+if (isActive == false)
+    return;
+
+for (int i = 0; i < actors.Count; i++)
+    actors[i].Reset();
+
+if (target != null && target.IsReady == false)
+{
+    target.Prepare();
+    target.Notify();
+}
+```
+
+Źle:
+
+```csharp
+if (!isActive) return;                        // instrukcja w tej samej linii, negacja przez !
+for (int i = 0; i < n; i++) { Do(i); }        // zbędne klamry i instrukcja w tej samej linii
+```
+
 ### Input
 
 Używamy **nowego Input Systemu**. Akcje są w `Assets/_Project/InputSystem_Actions.inputactions`; komponenty przyjmują je przez `[SerializeField] InputActionReference` (zgodnie z regułą atrybutu powyżej pola). Nie używaj starego `UnityEngine.Input`.
