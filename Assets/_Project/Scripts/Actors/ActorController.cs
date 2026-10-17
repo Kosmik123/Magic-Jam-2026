@@ -118,7 +118,9 @@ namespace MagicJam.Actors
             if (animator != null)
             {
                 foreach (var param in animator.parameters)
+                {
                     animatorParams.Add(param.name);
+                }
             }
 
             CaptureMark();
@@ -545,15 +547,15 @@ namespace MagicJam.Actors
 
         private string TriggerFor(InteractableType type)
         {
-            switch (type)
-            {
-                case InteractableType.Pickup: return pickupTrigger;
-                case InteractableType.Usable: return useTrigger;
-                case InteractableType.Talkable: return talkTrigger;
-                case InteractableType.Physical: return physicalTrigger;
-                default: return null;
-            }
-        }
+			return type switch
+			{
+				InteractableType.Pickup => pickupTrigger,
+				InteractableType.Usable => useTrigger,
+				InteractableType.Talkable => talkTrigger,
+				InteractableType.Physical => physicalTrigger,
+				_ => null,
+			};
+		}
 
         private void SetAnimatorTrigger(string param)
         {
