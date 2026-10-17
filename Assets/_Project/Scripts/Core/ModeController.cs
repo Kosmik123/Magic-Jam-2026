@@ -1,4 +1,5 @@
 using System;
+using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -43,18 +44,22 @@ namespace MagicJam.Core
 
         private int lastTickSecond;
 
+        [ShowNativeProperty]
         public FilmMode Mode { get; private set; }
 
         public bool IsRecording => Mode == FilmMode.Action;
 
         /// <summary>How many retakes happened so far (0 = first take).</summary>
+        [ShowNativeProperty]
         public int RetakeCount { get; private set; }
 
         /// <summary>Seconds recorded in the current take (counts only in Action, resets on retake).</summary>
+        [ShowNativeProperty]
         public float TakeTime { get; private set; }
 
         public float MinTakeDuration => minTakeDuration;
 
+        [ShowNativeProperty]
         public bool CanRetake => TakeTime >= minTakeDuration;
 
         private void Awake()
