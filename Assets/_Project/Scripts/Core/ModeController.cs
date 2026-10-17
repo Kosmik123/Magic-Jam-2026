@@ -10,8 +10,17 @@ namespace MagicJam.Core
     /// Other systems subscribe to <see cref="ModeChanged"/> / <see cref="Retaken"/> instead of polling.
     /// </summary>
     public class ModeController : MonoBehaviour
-    {
-        [SerializeField]
+	{       
+        /// <summary>Raised after the mode changed; the argument is the new mode.</summary>
+		public event Action<FilmMode> ModeChanged;
+
+		/// <summary>
+		/// Raised after a retake. The argument is the new <see cref="RetakeCount"/>.
+		/// The mode is already back to Cut when this fires.
+		/// </summary>
+		public event Action<int> Retaken;
+
+		[SerializeField]
         private InputActionReference toggleAction;
 
         [SerializeField]
@@ -27,14 +36,7 @@ namespace MagicJam.Core
         /// <summary>How many retakes happened so far (0 = first take).</summary>
         public int RetakeCount { get; private set; }
 
-        /// <summary>Raised after the mode changed; the argument is the new mode.</summary>
-        public event Action<FilmMode> ModeChanged;
 
-        /// <summary>
-        /// Raised after a retake. The argument is the new <see cref="RetakeCount"/>.
-        /// The mode is already back to Cut when this fires.
-        /// </summary>
-        public event Action<int> Retaken;
 
         private void Awake()
         {
