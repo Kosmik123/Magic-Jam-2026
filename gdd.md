@@ -57,8 +57,8 @@ Kamera ma ograniczenia ruchu w obrębie pokoju (bounding box, bez przenikania pr
 - Plotki to dymki tekstowe z podpowiedziami do zagadek.
 
 ### 5.3 Przejścia
-- **Cięcie → Akcja:** aktorzy wracają na pozycję i pozę z momentu cięcia (ciągłość), potem grają dalej.
-- **R (dubel):** powrót do stanu z początku ujęcia (snapshot), łącznie z rekwizytami i zmianami ekipy. Licznik dubli +1.
+- **Cięcie → Akcja:** aktorzy wracają na pozycję i pozę z momentu cięcia (ciągłość), potem grają dalej. Pamięć aktora zostaje bez zmian (kadrowanie w czasie Cięcia jej nie zmienia).
+- **R (dubel):** powrót do stanu z początku ujęcia (snapshot), łącznie z rekwizytami, zmianami ekipy, ekwipunkiem i pamięcią aktora. Licznik dubli +1.
   - Dubel przełącza w tryb Cięcia. Aktorzy **wracają na pozycje startowe pieszo, po NavMeshu** – bez teleportacji, jak na prawdziwym planie filmowym.
   - Po dotarciu na znacznik aktor przyjmuje pozę startową i sygnalizuje gotowość (np. stoi w pozie idle ujęcia).
   - Gotowość wszystkich aktorów = ujęcie w pełni zresetowane.
@@ -70,27 +70,29 @@ Plan jest liczony automatycznie co klatkę na podstawie kadru, względem **aktyw
 
 Wszystkie mechaniki gry opierają się wyłącznie na pracy kamery i planach filmowych – nie ma innych systemów sterowania aktorem.
 
-| Plan | Warunek w kadrze | Akcja aktora |
+**Zasada filmowa:** jak w montażu – najpierw zbliżenie pokazuje widzowi obiekt, zaraz potem aktor wchodzi z nim w interakcję. Zbliżenie zapisuje obiekt w pamięci aktora (sekcja 7.2), a szersze plany decydują, co aktor z tą pamięcią zrobi.
+
+| Plan | Warunek w kadrze | Skutek |
 |---|---|---|
-| Ogólny | aktor mały w kadrze (< 30% wysokości) | idzie do obiektu / punktu nawigacyjnego w centrum kadru (eksploracja, przemieszczanie) |
-| Pełny | widać całą postać | akcja fizyczna: wspinaczka, pchnięcie, skok |
-| Amerykański | widać od kolan w górę | użycie trzymanego przedmiotu na obiekcie w kadrze |
-| Średni | widać od pasa w górę | rozmowa z postacią / zbadanie obiektu |
-| Detal | obiekt interaktywny > 40% kadru | aktor podnosi przedmiot (jeśli w zasięgu, inaczej podchodzi) |
+| Zbliżenie na obiekt (detal) | w kadrze tylko jeden obiekt interaktywny (> 40% kadru) | obiekt trafia do **pamięci aktora** (nadpisuje poprzedni); brak akcji |
+| Zbliżenie na twarz aktora | twarz aktora dominuje w kadrze | **pamięć aktora się czyści** – aktor „myśli o sobie”, zapomina o obiektach |
+| Średni / amerykański | aktor (od pasa / od kolan w górę) + obiekt w kadrze | **interakcja** (sekcja 8) |
+| Pełny | widać całą postać | akcja fizyczna: wspinaczka, pchnięcie, skok (druga faza) |
+| Ogólny / szerszy | aktor mały w kadrze (< 30% wysokości) | **ruch**: aktor tylko podchodzi do zapamiętanego obiektu, bez interakcji |
+
+**Plan szerszy = nawigacja:**
+- Aktor idzie do zapamiętanego obiektu tylko wtedy, gdy **obiekt i aktor są w kadrze**. Obiekty poza kadrem istnieją, ale nie są dla aktora istotne.
+- Kadr wyznacza obszar ruchu: plan na cały pokój – aktor może przejść przez cały pokój; węższy plan – aktor porusza się tylko w obrębie kadru.
+- Po dojściu aktor staje przy obiekcie. Żeby wykonał interakcję, trzeba zawęzić plan co najmniej do średniego/amerykańskiego.
+- Bez obiektu w pamięci (lub gdy jest poza kadrem) aktor stoi.
 
 **Implementacja:**
 - Aktor ma punkty kontrolne: `Head`, `Waist`, `Knees`, `Feet`.
 - `Camera.WorldToViewportPoint` + raycast na zasłonięcie → które punkty są widoczne → plan.
 - **Obiekt w fokusie** = obiekt interaktywny najbliżej środka kadru, widoczny.
-- Akcja odpala się, gdy plan i obiekt w fokusie są stabilne przez ~0.5 s (żeby nie wywoływać akcji przy przypadkowym ruchu kamery).
+- Skutek planu (zapis do pamięci, czyszczenie, interakcja) odpala się, gdy plan i obiekt w fokusie są stabilne przez ~0.5 s (żeby nie reagować na przypadkowy ruch kamery).
 - Wskaźnik planu w rogu wizjera: nazwa planu + ikona akcji, która się wykona.
 - Progi trzymać w jednym `ScriptableObject` (`ShotConfig`) do tuningu.
-
-**Plan ogólny = nawigacja:**
-- Plan ogólny to podstawowe narzędzie eksploracji i poruszania aktora po pomieszczeniach – używany najczęściej, zwłaszcza na początku poziomów.
-- Gracz „prowadzi” aktora, kadrując szeroko z celem (obiekt, drzwi, miejsce) w centrum kadru; aktor idzie tam przez NavMesh.
-- Cele ruchu to nie tylko obiekty interaktywne: także punkty nawigacyjne (drzwi, przejścia, znaczniki na podłodze), żeby można było przemieszczać aktora między strefami pokoju.
-- Pozostałe plany (pełny, amerykański, średni, detal) służą do interakcji, gdy aktor jest już na miejscu.
 
 **Kąty (późniejsze poziomy, opcjonalne):**
 - Żabia perspektywa (kamera nisko, patrzy w górę) – postać w kadrze „silna”.
@@ -98,32 +100,84 @@ Wszystkie mechaniki gry opierają się wyłącznie na pracy kamery i planach fil
 
 ## 7. Aktor – AI
 
-Maszyna stanów:
+### 7.1 Warstwy
+
+```
+OperatorCamera ─► ShotDetector ─► SetDirector ──zapisuje──► ActorKnowledge (pamięć głównego aktora)
+                                      │                           │ czyta
+                                      │                           ▼
+                                      │                      ActorBrain (decyzje głównego aktora)
+                                      │                           │ komendy
+                                      ▼                           ▼
+                        ActorController ekipy          ActorController głównego aktora
+```
+
+- **`SetDirector`** – nadrzędny system planu filmowego. Czyta wynik `ShotDetector`, prowadzi cykl Akcja/Cięcie/Dubel i wydaje komendy wszystkim aktorom. Aktorami są też postacie pomocnicze i ekipa (obsługa planu).
+- **`ActorKnowledge`** – centralne źródło danych o głównym aktorze: obiekt, na którym się skupia (pamięć), i docelowa pozycja. Tylko przechowuje stan i emituje zdarzenia o jego zmianach. Zapisuje go `SetDirector`, nie kamera.
+- **`Inventory`** – co aktor ma przy sobie. **Osobna struktura niż pamięć**: pamięć = na czym aktor się skupia, ekwipunek = czego może użyć.
+- **`ActorBrain`** – zamienia pamięć + bieżący plan na komendy (`GoTo`, `Interact`).
+- **`ActorController`** – wykonawca (ruch, interakcje, animacje), bez własnej inteligencji. Używany przez głównego aktora i ekipę; ekipa dostaje komendy bezpośrednio od `SetDirector`.
+
+### 7.2 Pamięć aktora
+
+| Zdarzenie | Pamięć |
+|---|---|
+| Zbliżenie na obiekt (stabilne ~0.5 s) w trakcie akcji | zapisuje obiekt, **nadpisuje poprzedni** |
+| Zbliżenie na twarz aktora | **czyści** |
+| **Każda interakcja** (z zapamiętanym obiektem czy innym, udana czy nie) | **czyści** – zbliżenie ma sens tylko tuż przed interakcją |
+| Brak drogi do obiektu | **czyści** |
+| Kadrowanie w trybie Cięcia | bez zmian – to nie dzieje się w filmie |
+| Cięcie → Akcja | bez zmian – aktor pamięta obiekt poza ujęciem |
+| Dubel | przywracana ze snapshotu z początku ujęcia (aktor zapomina wszystko z nieudanego ujęcia) |
+
+### 7.3 Maszyna stanów
+
 - `Idle` – stoi na znaczniku, gra niewielką animację.
 - `MoveTo` – NavMeshAgent do celu.
-- `Interact` – wykonuje akcję zależną od planu (sekcja 6).
-- `Flee` – ucieka od zagrożenia w kadrze (priorytet najwyższy).
+- `Interact` – wykonuje interakcję (sekcja 8).
 - `OffDuty` – tryb przerwy: deterministyczna lista zachowań (kawa, plotki, catering).
 - `ReturnToMark` – po dublu idzie po NavMeshu na pozycję startową ujęcia, potem przyjmuje pozę startową.
-- `Fail` – śmieszna porażka (potknięcie, zdziwienie), ujęcie nieudane.
+- `Fail` – śmieszna porażka (sekcja 7.4).
+- `Flee` – ucieczka od zagrożenia. **Odłożone na później** – na razie aktor tylko celowo dąży do obiektów.
 
-Priorytet w akcji: `Flee` > akcja planu na obiekcie w fokusie > `Idle`.
+Priorytet w akcji: interakcja z planu średniego/amerykańskiego > ruch do zapamiętanego obiektu > `Idle`.
+
+### 7.4 Porażki
+
+| Sytuacja | Zachowanie | Pamięć | Ekwipunek |
+|---|---|---|---|
+| Brak drogi (np. wózek blokuje schody) | podchodzi jak najbliżej, staje, zdziwiona mina | czyści (o przeszkodzie też nie pamięta) | bez zmian |
+| Ciemność (wejście w ciemny korytarz) | potyka się i upada, leży do dubla | bez znaczenia – dubel przywraca snapshot | bez znaczenia |
+| Zły przedmiot (np. szczoteczka na współlokatora) | próbuje go użyć, potem chowa przedmiot do kieszeni | czyści (jak każda interakcja) | przedmiot **zostaje** |
+| Za wcześnie w scenariuszu (np. raport, zanim szef o niego poprosił) | interakcja się odbywa, obiekt odmawia („jeszcze nie potrzebuję”) | czyści (jak każda interakcja) | przedmiot zostaje |
 
 **Wymóg:** całe zachowanie deterministyczne (brak `Random` bez stałego seeda), żeby dubel dawał ten sam wynik przy tym samym kadrowaniu.
 
 ## 8. Obiekty i interakcje
 
+**Interakcja** odpala się w planie średnim/amerykańskim, gdy aktor i obiekt są w kadrze:
+- Obiekt z pamięci w kadrze → interakcja z nim według typu obiektu (klamka → otwiera drzwi, włącznik → naciska, NPC → rozmawia, przedmiot → podnosi).
+- Aktor trzyma przedmiot, a w kadrze jest druga postać / obiekt → używa przedmiotu na nim.
+- Wynik zależy od: obiektu, przedmiotu w ręce i stanu scenariusza (obiekt może odmówić).
+- Po każdej interakcji pamięć się czyści (sekcja 7.2).
+
 Komponent `Interactable` z typem:
-- `Pickup` – przedmiot do podniesienia (detal).
-- `Usable` – obiekt, na którym używa się przedmiotu (amerykański), z polem `requiredItem`.
-- `Talkable` – NPC lub obiekt do rozmowy/zbadania (średni), z listą kwestii.
-- `Physical` – do wspinaczki/pchnięcia (pełny).
-- `Threat` – zagrożenie wywołujące ucieczkę.
+- `Pickup` – przedmiot do podniesienia (trafia do ekwipunku).
+- `Usable` – obiekt do użycia (klamka, włącznik) lub do użycia na nim przedmiotu, z polem `requiredItem`.
+- `Talkable` – NPC lub obiekt do rozmowy/zbadania, z listą kwestii.
+- `Physical` – do wspinaczki/pchnięcia (plan pełny, druga faza).
+- `Threat` – zagrożenie wywołujące ucieczkę (odłożone na później).
 
 Komponenty dodatkowe:
-- `NavPoint` – nieinteraktywny cel ruchu dla planu ogólnego (drzwi, przejście, znacznik na podłodze).
+- `NavPoint` – nieinteraktywny cel ruchu (drzwi, przejście, znacznik na podłodze).
 - `FilmOnly` – obiekt istnieje (kolizja, zachowanie) tylko wtedy, gdy jest w kadrze w trakcie akcji. Używać oszczędnie, tylko do glitchy i zagrożeń.
 - `CrewSchedule` – lista zdarzeń ekipy w przerwie (czas od początku przerwy → akcja).
+
+### 8.1 Do decyzji
+
+- Czy `NavPoint` zapamiętuje się zbliżeniem jak obiekt interaktywny, czy działa inaczej?
+- Kryteria zbliżenia na twarz aktora (progi w `ShotConfig`).
+- Zagrożenia i ucieczka (`Threat`, `Flee`).
 
 ## 9. Zasady „Beyond Reality”
 
@@ -137,26 +191,28 @@ Komponenty dodatkowe:
 Każdy poziom = jeden pokój/lokacja. Dane w `ScriptableObject` (`LevelData`): scena, lista punktów scenariusza, startowe pozycje, harmonogram ekipy, plotki.
 
 ### Poziom 1 – Pobudka (tutorial)
-- **Uczy:** ruch kamery, Akcja/Cięcie, plan ogólny.
+- **Uczy:** ruch kamery, Akcja/Cięcie, zbliżenie → plan ogólny → plan średni.
 - **Scenariusz:** aktor wstaje z łóżka. Aktor idzie do okna i odsłania zasłony.
-- **Rozwiązanie:** plan ogólny z oknem w centrum kadru.
+- **Rozwiązanie:** zbliżenie na zasłony (aktor zapamiętuje) → ogólny z aktorem i oknem (aktor podchodzi) → średni (odsłania zasłony).
 
 ### Poziom 2 – Łazienka
-- **Uczy:** detal, średni.
+- **Uczy:** pamięć aktora (zbliżenie nadpisuje poprzednie), interakcja w planie średnim.
 - **Scenariusz:** aktor bierze szczoteczkę. Aktor przegląda się w lustrze.
-- **Rozwiązanie:** detal na szczoteczkę → podnosi. Średni z lustrem → bada odbicie.
+- **Rozwiązanie:** zbliżenie na szczoteczkę → średni z aktorem i szczoteczką → podnosi. Zbliżenie na lustro → średni z lustrem → bada odbicie.
 - **Smaczek:** w lustrze widać ekipę (zapowiedź twistu).
 
 ### Poziom 3 – Śniadanie
-- **Uczy:** amerykański, rozmowa z NPC, plotki w przerwie.
+- **Uczy:** użycie przedmiotu z ekwipunku (amerykański), rozmowa z NPC, plotki w przerwie.
 - **Scenariusz:** aktor rozmawia ze współlokatorem. Aktor nalewa kawę. Aktor podaje kawę współlokatorowi.
-- **Rozwiązanie:** średni (rozmowa – współlokator prosi o kawę) → detal na dzbanek → amerykański na współlokatora.
+- **Rozwiązanie:** zbliżenie na współlokatora → średni (rozmowa – współlokator prosi o kawę) → zbliżenie na dzbanek → średni (aktor nalewa kawę) → amerykański z aktorem i współlokatorem (podaje kawę).
+- **Śmieszna porażka:** amerykański na współlokatora ze szczoteczką w ręce → aktor próbuje umyć mu zęby i chowa szczoteczkę do kieszeni.
 - **Przerwa:** plotka podpowiada, co lubi współlokator.
 
 ### Poziom 4 – Klatka schodowa (początek glitchy)
 - **Uczy:** harmonogram ekipy, ciemność.
 - **Przeszkoda:** wózek cateringowy blokuje schody + ciemny korytarz.
-- **Rozwiązanie:** ogłosić cięcie, odczekać, aż technik odjedzie wózkiem → akcja. Detal na włącznik → aktor zapala światło → ogólny na wyjście.
+- **Rozwiązanie:** ogłosić cięcie, odczekać, aż technik odjedzie wózkiem → akcja. Zbliżenie na włącznik → średni (aktor zapala światło) → zbliżenie na wyjście → ogólny z aktorem i wyjściem (aktor idzie).
+- **Porażki:** wózek na drodze → aktor podchodzi, staje zdziwiony i zapomina cel. Wejście w ciemny korytarz → aktor się przewraca, potrzebny dubel.
 - **Glitch:** aktor raz patrzy w kamerę i mówi kwestię spoza scenariusza.
 
 ### Poziom 5 – Przystanek
@@ -169,10 +225,10 @@ Każdy poziom = jeden pokój/lokacja. Dane w `ScriptableObject` (`LevelData`): s
 - **Uczy:** nic nowego – sprawdzian wszystkich planów.
 - **Scenariusz:** aktor wchodzi do biura. Aktor wita się z szefem. Aktor oddaje raport. Aktor siada przy biurku.
 - **Zagadka:** połączenie mechanik:
-  - średni na szefa (rozmowa – szef pyta o raport),
+  - zbliżenie na szefa → średni (rozmowa – szef pyta o raport),
   - przerwa: ekipa w harmonogramie przynosi zapomniany rekwizyt (teczkę) na plan,
-  - detal na teczkę → amerykański na szefa (oddanie raportu),
-  - ogólny na biurko → aktor siada.
+  - zbliżenie na teczkę → średni (aktor podnosi) → amerykański z aktorem i szefem (oddanie raportu); oddanie, zanim szef zapyta → szef odmawia,
+  - zbliżenie na biurko → ogólny (aktor podchodzi) → średni (aktor siada).
 - **Finał (po odhaczeniu ostatniego punktu):**
   1. Gracz wciska Cięcie. Ekipa przechodzi w tryb przerwy, ale aktor nie.
   2. Aktor wstaje, patrzy prosto w kamerę (1–2 s ciszy).
@@ -185,6 +241,7 @@ Każdy poziom = jeden pokój/lokacja. Dane w `ScriptableObject` (`LevelData`): s
 
 - **Panel scenariusza (lewa strona, Tab):** stylizowana kartka maszynopisu, punkty z checkboxami, odhaczanie z animacją.
 - **Wizjer (tryb akcji):** REC, czarne pasy, wskaźnik planu + ikona akcji, licznik czasu ujęcia.
+- **Wskaźnik pamięci aktora:** mała ikona / podświetlenie zapamiętanego obiektu, żeby gracz wiedział, o czym aktor „myśli” i że interakcja lub zbliżenie na twarz to wyczyści.
 - **Licznik dubli** (prawy górny róg).
 - **Klaps filmowy** – animacja przy przejściu Akcja/Cięcie.
 - **Ekran wyniku:** liczba dubli, gwiazdki (1–3) według progów z `LevelData`.
@@ -206,22 +263,26 @@ Każdy poziom = jeden pokój/lokacja. Dane w `ScriptableObject` (`LevelData`): s
 
 ```
 Assets/
-  Scripts/
-    Core/        GameManager, LevelManager, ModeController (Action/Cut), SnapshotSystem
-    Camera/      OperatorCamera (ruch, ograniczenia), ShotDetector (plan + fokus)
-    Actors/      ActorController (FSM), ActorCheckpoints, OffDutyBehaviour
-    Crew/        CrewSchedule, CrewMember
-    Interaction/ Interactable, NavPoint, FilmOnly
-    Script/      ScriptPanel, ScriptBeat, BeatTracker (nagrane w kadrze?)
-    UI/          ViewfinderUI, ResultsScreen, MainMenu
-  Data/          ShotConfig.asset, Levels/*.asset (LevelData)
-  Scenes/        MainMenu, Level01..Level06
+  _Project/            pliki gry (zewnętrzne biblioteki bezpośrednio w Assets/)
+    Scripts/
+      Core/        GameManager, LevelManager, ModeController (Action/Cut), SnapshotSystem
+      Director/    SetDirector (nadrzędny system planu: kamera → komendy dla aktorów)
+      Camera/      OperatorCamera (ruch, ograniczenia), ShotDetector (plan + fokus)
+      Actors/      ActorController (FSM), ActorKnowledge (pamięć), ActorBrain, Inventory,
+                   ActorCheckpoints, OffDutyBehaviour
+      Crew/        CrewSchedule, CrewMember
+      Interaction/ Interactable, NavPoint, FilmOnly
+      Script/      ScriptPanel, ScriptBeat, BeatTracker (nagrane w kadrze?)
+      UI/          ViewfinderUI, ResultsScreen, MainMenu
+    Data/          ShotConfig.asset, Levels/*.asset (LevelData)
+    Scenes/        MainMenu, Level01..Level06
 ```
 
 **Kluczowe zasady:**
 - `ModeController` emituje eventy `OnActionStart`, `OnCut`, `OnRetake`. Systemy subskrybują, nie odpytują.
-- `SnapshotSystem` zapisuje stan (pozycje, rotacje, stany obiektów, ekwipunek aktora) na starcie ujęcia, przywraca przy R. Pozycji aktorów nie ustawia bezpośrednio – zleca im powrót po NavMeshu (`MoveTo` na pozycję ze snapshotu).
+- `SnapshotSystem` zapisuje stan (pozycje, rotacje, stany obiektów, ekwipunek i pamięć aktora) na starcie ujęcia, przywraca przy R. Pozycji aktorów nie ustawia bezpośrednio – zleca im powrót po NavMeshu (`MoveTo` na pozycję ze snapshotu).
 - `ShotDetector` to jedyne miejsce liczące plan – reszta czyta jego wynik.
+- `SetDirector` to jedyne miejsce zamieniające plan na komendy i zapisy do `ActorKnowledge`. Kamera nie zna aktorów, `ActorController` nie zna kamery.
 - Poziomy data-driven: nowy poziom = nowa scena + `LevelData`, bez zmian w kodzie.
 
 ## 14. Priorytety (MVP → dodatki)
@@ -229,8 +290,8 @@ Assets/
 **MVP (musi działać):**
 1. Kamera operatora z ograniczeniami.
 2. Akcja/Cięcie/Dubel + snapshot.
-3. ShotDetector: ogólny, amerykański, średni, detal.
-4. Aktor FSM + Interactable (Pickup, Usable, Talkable).
+3. ShotDetector: ogólny, amerykański, średni, zbliżenie na obiekt, zbliżenie na twarz aktora.
+4. Aktor FSM + SetDirector + ActorKnowledge/ActorBrain/Inventory + Interactable (Pickup, Usable, Talkable).
 5. Panel scenariusza + BeatTracker.
 6. Poziomy 1–3.
 
