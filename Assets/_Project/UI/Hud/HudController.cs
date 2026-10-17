@@ -102,25 +102,29 @@ namespace MagicJam.UI
         public void SetShotName(string name)
         {
             shotName = string.IsNullOrEmpty(name) ? "—" : name;
-            if (shotLabel != null) shotLabel.text = shotName;
+            if (shotLabel != null)
+                shotLabel.text = shotName;
         }
 
         public void SetShotTime(float seconds)
         {
             shotTime = Mathf.Max(0f, seconds);
-            if (timerLabel != null) timerLabel.text = FormatTime(shotTime);
+            if (timerLabel != null) 
+                timerLabel.text = FormatTime(shotTime);
         }
 
         public void SetRetakes(int count)
         {
             retakes = Mathf.Max(0, count);
-            if (retakeLabel != null) retakeLabel.text = $"Dubel: {retakes}";
+            if (retakeLabel != null)
+                retakeLabel.text = $"Dubel: {retakes}";
         }
 
         public void SetScene(string name)
         {
             sceneName = name ?? "";
-            if (sceneLabel != null) sceneLabel.text = sceneName;
+            if (sceneLabel != null) 
+                sceneLabel.text = sceneName;
         }
 
         /// <summary>Replaces the script with a new list of tasks (all unchecked).</summary>
@@ -175,8 +179,10 @@ namespace MagicJam.UI
             hud.EnableInClassList(RecordingClass, recording);
             hud.EnableInClassList(CutClass, !recording);
             recDot.RemoveFromClassList(RecDotDimClass);
-            if (recording) blinkItem?.Resume();
-            else blinkItem?.Pause();
+            if (recording) 
+                blinkItem?.Resume();
+            else 
+                blinkItem?.Pause();
         }
 
         private void RebuildTasks()
