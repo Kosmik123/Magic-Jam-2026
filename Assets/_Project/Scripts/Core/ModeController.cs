@@ -1,4 +1,5 @@
 using System;
+using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -12,23 +13,23 @@ namespace MagicJam.Core
     /// instead of polling.
     /// </summary>
     public class ModeController : MonoBehaviour
-	{       
+    {
         /// <summary>Raised after the mode changed; the argument is the new mode.</summary>
-		public event Action<FilmMode> ModeChanged;
+        public event Action<FilmMode> ModeChanged;
 
-		/// <summary>
-		/// Raised after a retake. The argument is the new <see cref="RetakeCount"/>.
-		/// The mode is already back to Cut when this fires.
-		/// </summary>
-		public event Action<int> Retaken;
+        /// <summary>
+        /// Raised after a retake. The argument is the new <see cref="RetakeCount"/>.
+        /// The mode is already back to Cut when this fires.
+        /// </summary>
+        public event Action<int> Retaken;
 
-		/// <summary>
-		/// Raised every full second of recording in the current take.
-		/// The argument is the whole seconds recorded so far (1, 2, 3...); it restarts from 1 after a retake.
-		/// </summary>
-		public event Action<int> SecondElapsed;
+        /// <summary>
+        /// Raised every full second of recording in the current take.
+        /// The argument is the whole seconds recorded so far (1, 2, 3...); it restarts from 1 after a retake.
+        /// </summary>
+        public event Action<int> SecondElapsed;
 
-		[SerializeField]
+        [SerializeField]
         private InputActionReference toggleAction;
 
         [SerializeField]
@@ -43,21 +44,23 @@ namespace MagicJam.Core
 
         private int lastTickSecond;
 
+        [ShowNativeProperty]
         public FilmMode Mode { get; private set; }
 
         public bool IsRecording => Mode == FilmMode.Action;
 
         /// <summary>How many retakes happened so far (0 = first take).</summary>
+        [ShowNativeProperty]
         public int RetakeCount { get; private set; }
 
         /// <summary>Seconds recorded in the current take (counts only in Action, resets on retake).</summary>
+        [ShowNativeProperty]
         public float TakeTime { get; private set; }
 
         public float MinTakeDuration => minTakeDuration;
 
+        [ShowNativeProperty]
         public bool CanRetake => TakeTime >= minTakeDuration;
-
-
 
         private void Awake()
         {
