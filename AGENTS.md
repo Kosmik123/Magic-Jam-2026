@@ -110,14 +110,14 @@ Używamy **nowego Input Systemu**. Akcje są w `Assets/_Project/InputSystem_Acti
 
 | Gałąź | Przeznaczenie |
 |---|---|
-| `main` | **Stabilna wersja gry.** Trafiają tu tylko sprawdzone, działające zmiany (grywalny build). |
+| `master` | **Stabilna wersja gry.** Trafiają tu tylko sprawdzone, działające zmiany (grywalny build). |
 | `develop` | **Aktywny rozwój.** Tu na bieżąco lądują nowe funkcje i poprawki. |
 | `feature/<nazwa>` | Opcjonalne gałęzie na większe funkcje, odgałęziane od `develop` i do niego mergowane. |
 
 Zasady:
 
 - **Codzienna praca odbywa się na `develop`** (lub na gałęzi `feature/*` odbitej od `develop`).
-- **Nie commituj bezpośrednio do `main`.** Na `main` trafia tylko merge z `develop`, gdy gra na `develop` się kompiluje, uruchamia i działa stabilnie.
-- Gałęzie `feature/*` merguj z powrotem do `develop`, nigdy prosto do `main`.
-- Pull requesty kierujemy do `develop`; PR do `main` tylko przy wydawaniu stabilnej wersji.
+- **Nie commituj bezpośrednio do `master`.** Na `master` trafia tylko merge z `develop`, gdy gra na `develop` się kompiluje, uruchamia i działa stabilnie.
+- Gałęzie `feature/*` merguj z powrotem do `develop`, nigdy prosto do `master`.
+- Pull requesty kierujemy do `develop`; PR do `master` tylko przy wydawaniu stabilnej wersji.
 - Małe, opisowe commity. Commituj assety razem z ich `.meta`.
