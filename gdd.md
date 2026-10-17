@@ -58,7 +58,11 @@ Kamera ma ograniczenia ruchu w obrębie pokoju (bounding box, bez przenikania pr
 
 ### 5.3 Przejścia
 - **Cięcie → Akcja:** aktorzy wracają na pozycję i pozę z momentu cięcia (ciągłość), potem grają dalej.
-- **R (dubel):** pełny reset do stanu z początku ujęcia (snapshot), łącznie z rekwizytami i zmianami ekipy. Licznik dubli +1.
+- **R (dubel):** powrót do stanu z początku ujęcia (snapshot), łącznie z rekwizytami i zmianami ekipy. Licznik dubli +1.
+  - Dubel przełącza w tryb Cięcia. Aktorzy **wracają na pozycje startowe pieszo, po NavMeshu** – bez teleportacji, jak na prawdziwym planie filmowym.
+  - Po dotarciu na znacznik aktor przyjmuje pozę startową i sygnalizuje gotowość (np. stoi w pozie idle ujęcia).
+  - Gotowość wszystkich aktorów = ujęcie w pełni zresetowane.
+- **Potencjalna mechanika – falstart:** gracz może wcisnąć Akcję, zanim aktor wróci na swoją pozycję. Aktor zaczyna grać z miejsca, w którym akurat jest. Pozwala to celowo „ustawić” aktora w innym punkcie startowym. Do decyzji przy projektowaniu poziomów (kandydat do syntezy w poziomie 5).
 
 ## 6. System planów filmowych (rdzeń)
 
@@ -100,6 +104,7 @@ Maszyna stanów:
 - `Interact` – wykonuje akcję zależną od planu (sekcja 6).
 - `Flee` – ucieka od zagrożenia w kadrze (priorytet najwyższy).
 - `OffDuty` – tryb przerwy: deterministyczna lista zachowań (kawa, plotki, catering).
+- `ReturnToMark` – po dublu idzie po NavMeshu na pozycję startową ujęcia, potem przyjmuje pozę startową.
 - `Fail` – śmieszna porażka (potknięcie, zdziwienie), ujęcie nieudane.
 
 Priorytet w akcji: `Flee` > akcja planu na obiekcie w fokusie > `Idle`.
@@ -157,7 +162,7 @@ Każdy poziom = jeden pokój/lokacja. Dane w `ScriptableObject` (`LevelData`): s
 ### Poziom 5 – Przystanek
 - **Uczy:** plan pełny (akcja fizyczna).
 - **Scenariusz:** aktor dociera na przystanek. Aktor wsiada do autobusu.
-- **Przeszkoda:** [DO UZUPEŁNIENIA – rozwiązanie przeszkody blokującej drogę do przystanku]
+- **Przeszkoda:** [DO WYMYŚLENIA PÓŹNIEJ – zagadka będzie syntezą różnych mechanik z wcześniejszych poziomów]
 - **Brak glitchy.** Poziom ma być w pełni „normalny”, żeby finał był zaskoczeniem.
 
 ### Poziom 6 – Biuro (finał)
@@ -215,7 +220,7 @@ Assets/
 
 **Kluczowe zasady:**
 - `ModeController` emituje eventy `OnActionStart`, `OnCut`, `OnRetake`. Systemy subskrybują, nie odpytują.
-- `SnapshotSystem` zapisuje stan (pozycje, rotacje, stany obiektów, ekwipunek aktora) na starcie ujęcia, przywraca przy R.
+- `SnapshotSystem` zapisuje stan (pozycje, rotacje, stany obiektów, ekwipunek aktora) na starcie ujęcia, przywraca przy R. Pozycji aktorów nie ustawia bezpośrednio – zleca im powrót po NavMeshu (`MoveTo` na pozycję ze snapshotu).
 - `ShotDetector` to jedyne miejsce liczące plan – reszta czyta jego wynik.
 - Poziomy data-driven: nowy poziom = nowa scena + `LevelData`, bez zmian w kodzie.
 
