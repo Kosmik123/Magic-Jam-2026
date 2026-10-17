@@ -6,8 +6,9 @@ MonoImporter:
   defaultReferences:
   - moveAction: {fileID: -5704412060444979917, guid: 7a0e41823c0e1ae49925b6c673205355, type: 3}
   - lookAction: {fileID: -6980634397665160162, guid: 7a0e41823c0e1ae49925b6c673205355, type: 3}
-  - verticalAction: {instanceID: 0}
-  - zoomAction: {instanceID: 0}
+  - rotateAction: {fileID: 3030380508320322094, guid: 7a0e41823c0e1ae49925b6c673205355, type: 3}
+  - verticalAction: {fileID: -3181744373757321702, guid: 7a0e41823c0e1ae49925b6c673205355, type: 3}
+  - zoomAction: {fileID: -4489753650053672153, guid: 7a0e41823c0e1ae49925b6c673205355, type: 3}
   - roomBounds: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
