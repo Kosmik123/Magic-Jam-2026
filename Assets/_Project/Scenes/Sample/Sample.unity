@@ -284,7 +284,7 @@ MonoBehaviour:
   maxFov: 75
   zoomStep: 5
   zoomSmoothTime: 0.1
-  focus: {fileID: 0}
+  focus: {fileID: 1449912723}
   minFocusDistance: 0.5
   roomBounds: {fileID: 0}
   collisionMask:
@@ -468,6 +468,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &1449912723 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 77e304f285b9f9d44850e310820045c4, type: 3}
+  m_PrefabInstance: {fileID: 1666129440}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1666129440
 PrefabInstance:
   m_ObjectHideFlags: 0
