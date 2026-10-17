@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using MagicJam.Core;
+using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
@@ -25,10 +26,15 @@ namespace MagicJam.UI
         [SerializeField]
         private ModeController modeController;
 
-        [SerializeField] private InputActionReference toggleScriptAction;
-        [SerializeField] private bool scriptOpenOnStart;
+        [SerializeField]
+        private InputActionReference toggleScriptAction;
+
+        [SerializeField]
+        private bool scriptOpenOnStart;
+
         [Tooltip("REC dot blink interval in seconds. 0 = no blinking.")]
-        [SerializeField] private float recBlinkInterval = 0.5f;
+        [SerializeField]
+        private float recBlinkInterval = 0.5f;
 
         private VisualElement hud;
         private VisualElement recDot;
@@ -41,12 +47,24 @@ namespace MagicJam.UI
         private IVisualElementScheduledItem blinkItem;
 
         // State is cached so it survives UIDocument rebuilds (re-enable, UXML reimport).
+        [ShowNonSerializedField]
         private bool recording;
+
+        [ShowNonSerializedField]
         private bool scriptOpen;
+
+        [ShowNonSerializedField]
         private string shotName = "—";
+
+        [ShowNonSerializedField]
         private float shotTime;
+
+        [ShowNonSerializedField]
         private int retakes;
+
+        [ShowNonSerializedField]
         private string sceneName = "";
+
         private readonly List<string> tasks = new List<string>();
         private readonly List<bool> taskDone = new List<bool>();
 
@@ -176,10 +194,10 @@ namespace MagicJam.UI
         public void SetScriptOpen(bool open)
         {
             scriptOpen = open;
-            scriptPanel?.EnableInClassList(PanelHiddenClass, !scriptOpen);
+            scriptPanel?.EnableInClassList(PanelHiddenClass, scriptOpen == false);
         }
 
-        public void ToggleScript() => SetScriptOpen(!scriptOpen);
+        public void ToggleScript() => SetScriptOpen(scriptOpen == false);
 
         private void OnToggleScript(InputAction.CallbackContext _) => ToggleScript();
 
@@ -210,7 +228,7 @@ namespace MagicJam.UI
                 return;
 
             hud.EnableInClassList(RecordingClass, recording);
-            hud.EnableInClassList(CutClass, !recording);
+            hud.EnableInClassList(CutClass, recording == false);
             recDot.RemoveFromClassList(RecDotDimClass);
             if (recording) 
                 blinkItem?.Resume();

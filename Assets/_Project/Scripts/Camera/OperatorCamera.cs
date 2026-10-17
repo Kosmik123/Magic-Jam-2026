@@ -1,3 +1,4 @@
+using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -99,14 +100,29 @@ namespace MagicJam.CameraSystem
         private const float TurnDoneAngle = 0.1f;
 
         private Camera cam;
+
+        [ShowNonSerializedField]
         private float yaw;
+
+        [ShowNonSerializedField]
         private float pitch;
+
+        [ShowNonSerializedField]
         private Vector3 velocity;
+
         private Vector3 velocitySmoothing;
+
+        [ShowNonSerializedField]
         private float targetFov;
+
         private float fovSmoothing;
+
+        [ShowNonSerializedField]
         private bool isRotating;
+
+        [ShowNonSerializedField]
         private bool isTurningToFocus;
+
         private float yawSmoothing;
         private float pitchSmoothing;
 
@@ -323,8 +339,8 @@ namespace MagicJam.CameraSystem
                     break;
 
                 Vector3 direction = delta / distance;
-                if (!Physics.SphereCast(from, collisionRadius, direction, out RaycastHit hit, distance + Skin,
-                        collisionMask, QueryTriggerInteraction.Ignore))
+                if (Physics.SphereCast(from, collisionRadius, direction, out RaycastHit hit, distance + Skin,
+                        collisionMask, QueryTriggerInteraction.Ignore) == false)
                 {
                     return from + delta;
                 }
@@ -386,8 +402,10 @@ namespace MagicJam.CameraSystem
                 if (reference == null || reference.action == null)
                     continue;
 
-                if (enabled) reference.action.Enable();
-                else reference.action.Disable();
+                if (enabled)
+                    reference.action.Enable();
+                else
+                    reference.action.Disable();
             }
         }
 

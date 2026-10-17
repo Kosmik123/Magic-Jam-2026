@@ -1,3 +1,4 @@
+using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -11,22 +12,36 @@ namespace MagicJam.UI
     [RequireComponent(typeof(HudController))]
     public class HudTestDriver : MonoBehaviour
     {
-        [SerializeField] private string sceneName = "Scena 1 – Pobudka";
-        [SerializeField] private string[] tasks =
+        [SerializeField]
+        private string sceneName = "Scena 1 – Pobudka";
+
+        [SerializeField]
+        private string[] tasks =
         {
             "Aktor wstaje z łóżka.",
             "Aktor idzie do okna i odsłania zasłony.",
         };
-        [SerializeField] private string[] shotNames =
+
+        [SerializeField]
+        private string[] shotNames =
         {
             "PLAN OGÓLNY", "PLAN PEŁNY", "PLAN AMERYKAŃSKI", "PLAN ŚREDNI", "DETAL",
         };
 
         private HudController hud;
+
+        [ShowNonSerializedField]
         private bool recording;
+
+        [ShowNonSerializedField]
         private float shotTime;
+
+        [ShowNonSerializedField]
         private int retakes;
+
+        [ShowNonSerializedField]
         private int shotIndex;
+
         private bool[] done;
 
         private void Start()
