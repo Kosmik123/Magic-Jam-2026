@@ -1143,6 +1143,34 @@
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
+            ]       
+		},
+        {
+            "name": "Game",
+            "id": "aba304a0-6dd5-4e58-bdf3-65f561046b8a",
+            "actions": [
+                {
+                    "name": "ToggleScript",
+                    "type": "Button",
+                    "id": "7f51a958-338c-4e77-92c5-471feb9b4188",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "e507ae1e-3fcc-425d-954b-93c2439735e0",
+                    "path": "<Keyboard>/tab",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "ToggleScript",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
             ]
         }
     ],
