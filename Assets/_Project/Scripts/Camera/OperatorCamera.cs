@@ -75,6 +75,10 @@ namespace MagicJam.CameraSystem
         [SerializeField]
         private float minFocusDistance = 0.5f;
 
+        [Tooltip("Time to turn toward a newly set focus (when SetFocus is called with smooth = true).")]
+        [SerializeField]
+        private float focusTurnSmoothTime = 0.25f;
+
         [Header("Bounds & Collision")]
         [Tooltip("Box the camera must stay inside (usually the room volume). Optional.")]
         [SerializeField]
@@ -92,6 +96,7 @@ namespace MagicJam.CameraSystem
         private bool lockCursor = true;
 
         private const float Skin = 0.01f;
+        private const float TurnDoneAngle = 0.1f;
 
         private Camera cam;
         private float yaw;
@@ -101,6 +106,9 @@ namespace MagicJam.CameraSystem
         private float targetFov;
         private float fovSmoothing;
         private bool isRotating;
+        private bool isTurningToFocus;
+        private float yawSmoothing;
+        private float pitchSmoothing;
 
         public Camera Camera => cam;
 
@@ -140,7 +148,7 @@ namespace MagicJam.CameraSystem
 
             // Face the focus first, so the movement below is relative to the direction to it.
             if (focus != null)
-                AimAtFocus();
+                AimAtFocus(dt);
 
             UpdateZoom(input ? Read<float>(zoomAction) : 0f, dt);
             UpdateMovement(
@@ -148,21 +156,36 @@ namespace MagicJam.CameraSystem
                 input ? Read<float>(verticalAction) : 0f,
                 dt);
 
-            if (focus != null)
-                AimAtFocus();
+            // Keep the focus centered after the move. While still turning to a new focus, the turn above leads.
+            if (focus != null && isTurningToFocus == false)
+                AimAtFocus(dt);
         }
 
-        /// <summary>Makes the camera look at and orbit around the target. Passing null returns to free mode.</summary>
-        public void SetFocus(Transform target)
+        /// <summary>
+        /// Makes the camera face the target and move relative to it. Passing null returns to free mode.
+        /// </summary>
+        /// <param name="target">Object to focus on.</param>
+        /// <param name="smooth">True to turn toward the target over focusTurnSmoothTime, false to snap instantly.</param>
+        public void SetFocus(Transform target, bool smooth = true)
         {
+            if (target == null)
+            {
+                ClearFocus();
+                return;
+            }
+
             focus = target;
-            if (focus != null)
-                AimAtFocus();
+            isTurningToFocus = smooth;
+            yawSmoothing = 0f;
+            pitchSmoothing = 0f;
+            if (smooth == false)
+                AimAtFocus(0f);
         }
 
         public void ClearFocus()
         {
             focus = null;
+            isTurningToFocus = false;
         }
 
         /// <summary>Instantly places the camera, e.g. at level start. Respects bounds.</summary>
@@ -257,15 +280,36 @@ namespace MagicJam.CameraSystem
             return next - current;
         }
 
-        private void AimAtFocus()
+        private void AimAtFocus(float dt)
         {
             Vector3 direction = focus.position - transform.position;
             if (direction.sqrMagnitude < 1e-6f)
                 return;
 
             Vector3 euler = Quaternion.LookRotation(direction).eulerAngles;
-            yaw = euler.y;
-            pitch = Mathf.Clamp(NormalizeAngle(euler.x), minPitch, maxPitch);
+            float targetYaw = euler.y;
+            float targetPitch = Mathf.Clamp(NormalizeAngle(euler.x), minPitch, maxPitch);
+
+            if (isTurningToFocus)
+            {
+                yaw = Mathf.SmoothDampAngle(yaw, targetYaw, ref yawSmoothing, focusTurnSmoothTime, Mathf.Infinity, dt);
+                pitch = Mathf.Clamp(
+                    Mathf.SmoothDampAngle(pitch, targetPitch, ref pitchSmoothing, focusTurnSmoothTime, Mathf.Infinity, dt),
+                    minPitch,
+                    maxPitch);
+
+                if (Mathf.Abs(Mathf.DeltaAngle(yaw, targetYaw)) < TurnDoneAngle
+                    && Mathf.Abs(Mathf.DeltaAngle(pitch, targetPitch)) < TurnDoneAngle)
+                {
+                    isTurningToFocus = false;
+                }
+            }
+            else
+            {
+                yaw = targetYaw;
+                pitch = targetPitch;
+            }
+
             transform.rotation = Quaternion.Euler(pitch, yaw, 0f);
         }
 
