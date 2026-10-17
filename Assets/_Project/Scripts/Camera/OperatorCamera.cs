@@ -5,8 +5,10 @@ namespace MagicJam.CameraSystem
 {
     /// <summary>
     /// Free-moving film camera operated by the player.
-    /// WASD moves on the horizontal plane, mouse rotates, Q/E lowers/raises, scroll zooms (changes FOV).
+    /// WASD moves on the horizontal plane, mouse rotates while the middle button is held, Q/E lowers/raises, scroll zooms (changes FOV).
     /// Movement is clamped to a room bounds box and blocked by colliders on the collision mask.
+    /// With a focus set, the camera first turns to face it and only then moves along its own axes as usual,
+    /// so W/S approach/retreat and A/D strafe around the focus; rotating with the mouse clears the focus.
     /// </summary>
     [RequireComponent(typeof(Camera))]
     public class OperatorCamera : MonoBehaviour
@@ -17,6 +19,10 @@ namespace MagicJam.CameraSystem
 
         [SerializeField]
         private InputActionReference lookAction;
+
+        [Tooltip("Button that must be held for mouse movement to rotate the camera.")]
+        [SerializeField]
+        private InputActionReference rotateAction;
 
         [SerializeField]
         private InputActionReference verticalAction;
@@ -60,6 +66,19 @@ namespace MagicJam.CameraSystem
         [SerializeField]
         private float zoomSmoothTime = 0.1f;
 
+        [Header("Focus")]
+        [Tooltip("Optional. While set, the camera turns to face this object before every move, so W/S approach/retreat and A/D strafe around it. Cleared when the camera is rotated with the mouse.")]
+        [SerializeField]
+        private Transform focus;
+
+        [Tooltip("Closest the camera can get to the focus (horizontal distance).")]
+        [SerializeField]
+        private float minFocusDistance = 0.5f;
+
+        [Tooltip("Time to turn toward a newly set focus (when SetFocus is called with smooth = true).")]
+        [SerializeField]
+        private float focusTurnSmoothTime = 0.25f;
+
         [Header("Bounds & Collision")]
         [Tooltip("Box the camera must stay inside (usually the room volume). Optional.")]
         [SerializeField]
@@ -72,10 +91,12 @@ namespace MagicJam.CameraSystem
         [SerializeField]
         private float collisionRadius = 0.2f;
 
+        [Tooltip("Locks and hides the cursor while the rotate button is held.")]
         [SerializeField]
         private bool lockCursor = true;
 
         private const float Skin = 0.01f;
+        private const float TurnDoneAngle = 0.1f;
 
         private Camera cam;
         private float yaw;
@@ -84,8 +105,15 @@ namespace MagicJam.CameraSystem
         private Vector3 velocitySmoothing;
         private float targetFov;
         private float fovSmoothing;
+        private bool isRotating;
+        private bool isTurningToFocus;
+        private float yawSmoothing;
+        private float pitchSmoothing;
 
         public Camera Camera => cam;
+
+        /// <summary>Object the camera orbits around, or null in free mode.</summary>
+        public Transform Focus => focus;
 
         /// <summary>When false, input is ignored (e.g. pause menu, scripted finale).</summary>
         public bool InputEnabled { get; set; } = true;
@@ -102,21 +130,12 @@ namespace MagicJam.CameraSystem
         private void OnEnable()
         {
             SetActionsEnabled(true);
-            if (lockCursor)
-            {
-                Cursor.lockState = CursorLockMode.Locked;
-                Cursor.visible = false;
-            }
         }
 
         private void OnDisable()
         {
             SetActionsEnabled(false);
-            if (lockCursor)
-            {
-                Cursor.lockState = CursorLockMode.None;
-                Cursor.visible = true;
-            }
+            SetRotating(false);
         }
 
         private void Update()
@@ -124,12 +143,49 @@ namespace MagicJam.CameraSystem
             float dt = Time.deltaTime;
             bool input = InputEnabled;
 
-            UpdateRotation(input ? Read<Vector2>(lookAction) : Vector2.zero);
+            SetRotating(input && Read<float>(rotateAction) > 0f);
+            UpdateRotation(isRotating ? Read<Vector2>(lookAction) : Vector2.zero);
+
+            // Face the focus first, so the movement below is relative to the direction to it.
+            if (focus != null)
+                AimAtFocus(dt);
+
             UpdateZoom(input ? Read<float>(zoomAction) : 0f, dt);
             UpdateMovement(
                 input ? Read<Vector2>(moveAction) : Vector2.zero,
                 input ? Read<float>(verticalAction) : 0f,
                 dt);
+
+            // Keep the focus centered after the move. While still turning to a new focus, the turn above leads.
+            if (focus != null && isTurningToFocus == false)
+                AimAtFocus(dt);
+        }
+
+        /// <summary>
+        /// Makes the camera face the target and move relative to it. Passing null returns to free mode.
+        /// </summary>
+        /// <param name="target">Object to focus on.</param>
+        /// <param name="smooth">True to turn toward the target over focusTurnSmoothTime, false to snap instantly.</param>
+        public void SetFocus(Transform target, bool smooth = true)
+        {
+            if (target == null)
+            {
+                ClearFocus();
+                return;
+            }
+
+            focus = target;
+            isTurningToFocus = smooth;
+            yawSmoothing = 0f;
+            pitchSmoothing = 0f;
+            if (smooth == false)
+                AimAtFocus(0f);
+        }
+
+        public void ClearFocus()
+        {
+            focus = null;
+            isTurningToFocus = false;
         }
 
         /// <summary>Instantly places the camera, e.g. at level start. Respects bounds.</summary>
@@ -143,8 +199,25 @@ namespace MagicJam.CameraSystem
             velocitySmoothing = Vector3.zero;
         }
 
+        private void SetRotating(bool value)
+        {
+            if (isRotating == value)
+                return;
+
+            isRotating = value;
+            if (lockCursor == false)
+                return;
+
+            Cursor.lockState = value ? CursorLockMode.Locked : CursorLockMode.None;
+            Cursor.visible = value == false;
+        }
+
         private void UpdateRotation(Vector2 look)
         {
+            // Rotating by hand takes the camera out of focus mode; it keeps its current orientation.
+            if (focus != null && look != Vector2.zero)
+                ClearFocus();
+
             yaw += look.x * lookSensitivity;
             pitch = Mathf.Clamp(pitch - look.y * lookSensitivity, minPitch, maxPitch);
             transform.rotation = Quaternion.Euler(pitch, yaw, 0f);
@@ -174,6 +247,9 @@ namespace MagicJam.CameraSystem
             if (delta.sqrMagnitude < 1e-8f)
                 return;
 
+            if (focus != null)
+                delta = LimitFocusApproach(delta);
+
             Vector3 position = MoveWithCollision(transform.position, delta);
             Vector3 clamped = ClampToBounds(position);
 
@@ -182,6 +258,59 @@ namespace MagicJam.CameraSystem
                 velocity = Vector3.ProjectOnPlane(velocity, (position - clamped).normalized);
 
             transform.position = clamped;
+        }
+
+        /// <summary>Stops the camera from getting closer to the focus than minFocusDistance (horizontally).</summary>
+        private Vector3 LimitFocusApproach(Vector3 delta)
+        {
+            Vector3 current = transform.position;
+            Vector3 next = current + delta;
+            Vector3 flat = new Vector3(next.x - focus.position.x, 0f, next.z - focus.position.z);
+            float distance = flat.magnitude;
+            Vector3 currentFlat = new Vector3(current.x - focus.position.x, 0f, current.z - focus.position.z);
+
+            // Already closer than the minimum: don't push the camera out, just don't allow getting closer.
+            float limit = Mathf.Min(minFocusDistance, currentFlat.magnitude);
+            if (distance >= limit)
+                return delta;
+
+            Vector3 direction = distance > 1e-4f ? flat / distance : currentFlat.normalized;
+            next.x = focus.position.x + direction.x * limit;
+            next.z = focus.position.z + direction.z * limit;
+            return next - current;
+        }
+
+        private void AimAtFocus(float dt)
+        {
+            Vector3 direction = focus.position - transform.position;
+            if (direction.sqrMagnitude < 1e-6f)
+                return;
+
+            Vector3 euler = Quaternion.LookRotation(direction).eulerAngles;
+            float targetYaw = euler.y;
+            float targetPitch = Mathf.Clamp(NormalizeAngle(euler.x), minPitch, maxPitch);
+
+            if (isTurningToFocus)
+            {
+                yaw = Mathf.SmoothDampAngle(yaw, targetYaw, ref yawSmoothing, focusTurnSmoothTime, Mathf.Infinity, dt);
+                pitch = Mathf.Clamp(
+                    Mathf.SmoothDampAngle(pitch, targetPitch, ref pitchSmoothing, focusTurnSmoothTime, Mathf.Infinity, dt),
+                    minPitch,
+                    maxPitch);
+
+                if (Mathf.Abs(Mathf.DeltaAngle(yaw, targetYaw)) < TurnDoneAngle
+                    && Mathf.Abs(Mathf.DeltaAngle(pitch, targetPitch)) < TurnDoneAngle)
+                {
+                    isTurningToFocus = false;
+                }
+            }
+            else
+            {
+                yaw = targetYaw;
+                pitch = targetPitch;
+            }
+
+            transform.rotation = Quaternion.Euler(pitch, yaw, 0f);
         }
 
         private Vector3 MoveWithCollision(Vector3 from, Vector3 delta)
@@ -252,7 +381,7 @@ namespace MagicJam.CameraSystem
 
         private void SetActionsEnabled(bool enabled)
         {
-            foreach (InputActionReference reference in new[] { moveAction, lookAction, verticalAction, zoomAction })
+            foreach (InputActionReference reference in new[] { moveAction, lookAction, rotateAction, verticalAction, zoomAction })
             {
                 if (reference == null || reference.action == null)
                     continue;
