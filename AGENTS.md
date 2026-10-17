@@ -129,6 +129,28 @@ if (!isActive) return;                        // instrukcja w tej samej linii, n
 for (int i = 0; i < n; i++) { Do(i); }        // zbędne klamry i instrukcja w tej samej linii
 ```
 
+### Kolejność składowych klasy
+
+- **Eventy (`public event ...`) deklarujemy na samej górze klasy**, przed polami, właściwościami i metodami.
+- Dalej, w tej kolejności: pola serializowane, pozostałe pola prywatne, właściwości, metody.
+
+```csharp
+public class ModeController : MonoBehaviour
+{
+    /// <summary>Raised after the mode changed; the argument is the new mode.</summary>
+    public event Action<FilmMode> ModeChanged;
+
+    [SerializeField]
+    private InputActionReference toggleAction;
+
+    private int lastTickSecond;
+
+    public FilmMode Mode { get; private set; }
+
+    private void Awake() { ... }
+}
+```
+
 ### Input
 
 Używamy **nowego Input Systemu**. Akcje są w `Assets/_Project/InputSystem_Actions.inputactions`; komponenty przyjmują je przez `[SerializeField] InputActionReference` (zgodnie z regułą atrybutu powyżej pola). Nie używaj starego `UnityEngine.Input`.
