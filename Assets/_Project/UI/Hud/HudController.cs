@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using MagicJam.Core;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
@@ -19,6 +20,10 @@ namespace MagicJam.UI
         private const string PanelHiddenClass = "script-panel--hidden";
         private const string TaskClass = "task";
         private const string TaskDoneClass = "task--done";
+
+        [Tooltip("Optional. When set, the HUD follows the filming state (REC/cut, take timer, retakes) by itself.")]
+        [SerializeField]
+        private ModeController modeController;
 
         [SerializeField] private InputActionReference toggleScriptAction;
         [SerializeField] private bool scriptOpenOnStart;
@@ -80,6 +85,17 @@ namespace MagicJam.UI
                 toggleScriptAction.action.Enable();
             }
 
+            if (modeController != null)
+            {
+                recording = modeController.IsRecording;
+                retakes = modeController.RetakeCount;
+                shotTime = modeController.TakeTime;
+
+                modeController.ModeChanged += OnModeChanged;
+                modeController.Retaken += OnRetaken;
+                modeController.SecondElapsed += OnSecondElapsed;
+            }
+
             RefreshAll();
         }
 
@@ -87,6 +103,13 @@ namespace MagicJam.UI
         {
             blinkItem?.Pause();
             blinkItem = null;
+
+            if (modeController != null)
+            {
+                modeController.ModeChanged -= OnModeChanged;
+                modeController.Retaken -= OnRetaken;
+                modeController.SecondElapsed -= OnSecondElapsed;
+            }
 
             if (toggleScriptAction != null && toggleScriptAction.action != null)
                 toggleScriptAction.action.performed -= OnToggleScript;
@@ -155,6 +178,16 @@ namespace MagicJam.UI
         public void ToggleScript() => SetScriptOpen(!scriptOpen);
 
         private void OnToggleScript(InputAction.CallbackContext _) => ToggleScript();
+
+        private void OnModeChanged(FilmMode mode) => SetRecording(mode == FilmMode.Action);
+
+        private void OnRetaken(int count)
+        {
+            SetRetakes(count);
+            SetShotTime(0f);
+        }
+
+        private void OnSecondElapsed(int seconds) => SetShotTime(seconds);
 
         private void RefreshAll()
         {
