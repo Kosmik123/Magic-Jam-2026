@@ -12,37 +12,68 @@ namespace MagicJam.CameraSystem
     public class OperatorCamera : MonoBehaviour
     {
         [Header("Input")]
-        [SerializeField] private InputActionReference moveAction;
-        [SerializeField] private InputActionReference lookAction;
-        [SerializeField] private InputActionReference verticalAction;
-        [SerializeField] private InputActionReference zoomAction;
+        [SerializeField]
+        private InputActionReference moveAction;
+
+        [SerializeField]
+        private InputActionReference lookAction;
+
+        [SerializeField]
+        private InputActionReference verticalAction;
+
+        [SerializeField]
+        private InputActionReference zoomAction;
 
         [Header("Movement")]
-        [SerializeField] private float moveSpeed = 3f;
-        [SerializeField] private float verticalSpeed = 2f;
+        [SerializeField]
+        private float moveSpeed = 3f;
+
+        [SerializeField]
+        private float verticalSpeed = 2f;
+
         [Tooltip("Time to reach target velocity. 0 = instant.")]
-        [SerializeField] private float moveSmoothTime = 0.12f;
+        [SerializeField]
+        private float moveSmoothTime = 0.12f;
 
         [Header("Rotation")]
         [Tooltip("Degrees per pixel of mouse movement.")]
-        [SerializeField] private float lookSensitivity = 0.1f;
-        [SerializeField] private float minPitch = -85f;
-        [SerializeField] private float maxPitch = 85f;
+        [SerializeField]
+        private float lookSensitivity = 0.1f;
+
+        [SerializeField]
+        private float minPitch = -85f;
+
+        [SerializeField]
+        private float maxPitch = 85f;
 
         [Header("Zoom (FOV)")]
-        [SerializeField] private float minFov = 15f;
-        [SerializeField] private float maxFov = 75f;
+        [SerializeField]
+        private float minFov = 15f;
+
+        [SerializeField]
+        private float maxFov = 75f;
+
         [Tooltip("FOV change per scroll notch.")]
-        [SerializeField] private float zoomStep = 5f;
-        [SerializeField] private float zoomSmoothTime = 0.1f;
+        [SerializeField]
+        private float zoomStep = 5f;
+
+        [SerializeField]
+        private float zoomSmoothTime = 0.1f;
 
         [Header("Bounds & Collision")]
         [Tooltip("Box the camera must stay inside (usually the room volume). Optional.")]
-        [SerializeField] private BoxCollider roomBounds;
+        [SerializeField]
+        private BoxCollider roomBounds;
+
         [Tooltip("Layers the camera cannot pass through (walls, furniture).")]
-        [SerializeField] private LayerMask collisionMask = ~0;
-        [SerializeField] private float collisionRadius = 0.2f;
-        [SerializeField] private bool lockCursor = true;
+        [SerializeField]
+        private LayerMask collisionMask = ~0;
+
+        [SerializeField]
+        private float collisionRadius = 0.2f;
+
+        [SerializeField]
+        private bool lockCursor = true;
 
         private const float Skin = 0.01f;
 
