@@ -55,6 +55,8 @@ namespace MagicJam.UI
         private void Awake()
         {
             scriptOpen = scriptOpenOnStart;
+            if (modeController == null)
+                modeController = FindAnyObjectByType<ModeController>();
         }
 
         private void OnEnable()
