@@ -5,7 +5,7 @@ namespace MagicJam.CameraSystem
 {
     /// <summary>
     /// Free-moving film camera operated by the player.
-    /// WASD moves on the horizontal plane, mouse rotates, Q/E lowers/raises, scroll zooms (changes FOV).
+    /// WASD moves on the horizontal plane, mouse rotates while the middle button is held, Q/E lowers/raises, scroll zooms (changes FOV).
     /// Movement is clamped to a room bounds box and blocked by colliders on the collision mask.
     /// </summary>
     [RequireComponent(typeof(Camera))]
@@ -17,6 +17,10 @@ namespace MagicJam.CameraSystem
 
         [SerializeField]
         private InputActionReference lookAction;
+
+        [Tooltip("Button that must be held for mouse movement to rotate the camera.")]
+        [SerializeField]
+        private InputActionReference rotateAction;
 
         [SerializeField]
         private InputActionReference verticalAction;
@@ -72,6 +76,7 @@ namespace MagicJam.CameraSystem
         [SerializeField]
         private float collisionRadius = 0.2f;
 
+        [Tooltip("Locks and hides the cursor while the rotate button is held.")]
         [SerializeField]
         private bool lockCursor = true;
 
@@ -84,6 +89,7 @@ namespace MagicJam.CameraSystem
         private Vector3 velocitySmoothing;
         private float targetFov;
         private float fovSmoothing;
+        private bool isRotating;
 
         public Camera Camera => cam;
 
@@ -102,21 +108,12 @@ namespace MagicJam.CameraSystem
         private void OnEnable()
         {
             SetActionsEnabled(true);
-            if (lockCursor)
-            {
-                Cursor.lockState = CursorLockMode.Locked;
-                Cursor.visible = false;
-            }
         }
 
         private void OnDisable()
         {
             SetActionsEnabled(false);
-            if (lockCursor)
-            {
-                Cursor.lockState = CursorLockMode.None;
-                Cursor.visible = true;
-            }
+            SetRotating(false);
         }
 
         private void Update()
@@ -124,7 +121,8 @@ namespace MagicJam.CameraSystem
             float dt = Time.deltaTime;
             bool input = InputEnabled;
 
-            UpdateRotation(input ? Read<Vector2>(lookAction) : Vector2.zero);
+            SetRotating(input && Read<float>(rotateAction) > 0f);
+            UpdateRotation(isRotating ? Read<Vector2>(lookAction) : Vector2.zero);
             UpdateZoom(input ? Read<float>(zoomAction) : 0f, dt);
             UpdateMovement(
                 input ? Read<Vector2>(moveAction) : Vector2.zero,
@@ -141,6 +139,19 @@ namespace MagicJam.CameraSystem
             transform.SetPositionAndRotation(ClampToBounds(position), Quaternion.Euler(pitch, yaw, 0f));
             velocity = Vector3.zero;
             velocitySmoothing = Vector3.zero;
+        }
+
+        private void SetRotating(bool value)
+        {
+            if (isRotating == value)
+                return;
+
+            isRotating = value;
+            if (lockCursor == false)
+                return;
+
+            Cursor.lockState = value ? CursorLockMode.Locked : CursorLockMode.None;
+            Cursor.visible = value == false;
         }
 
         private void UpdateRotation(Vector2 look)
@@ -252,7 +263,7 @@ namespace MagicJam.CameraSystem
 
         private void SetActionsEnabled(bool enabled)
         {
-            foreach (InputActionReference reference in new[] { moveAction, lookAction, verticalAction, zoomAction })
+            foreach (InputActionReference reference in new[] { moveAction, lookAction, rotateAction, verticalAction, zoomAction })
             {
                 if (reference == null || reference.action == null)
                     continue;
