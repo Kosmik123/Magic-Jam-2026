@@ -3,15 +3,22 @@ using UnityEngine;
 namespace MagicJam.Actors
 {
     /// <summary>
-    /// Body reference points used by ShotDetector to decide the shot size (GDD section 6).
-    /// Place the transforms on the character rig (or as plain children for a capsule placeholder).
+    /// Body reference points (GDD section 6). Place the transforms on the character rig
+    /// (or as plain children for a capsule placeholder).
     /// </summary>
     public class ActorCheckpoints : MonoBehaviour
     {
-        [SerializeField] private Transform head;
-        [SerializeField] private Transform waist;
-        [SerializeField] private Transform knees;
-        [SerializeField] private Transform feet;
+        [SerializeField]
+        private Transform head;
+
+        [SerializeField]
+        private Transform waist;
+
+        [SerializeField]
+        private Transform knees;
+
+        [SerializeField]
+        private Transform feet;
 
         public Transform Head => head;
         public Transform Waist => waist;

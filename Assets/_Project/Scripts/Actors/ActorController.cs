@@ -6,36 +6,6 @@ using UnityEngine.AI;
 
 namespace MagicJam.Actors
 {
-    public enum ActorState
-    {
-        /// <summary>Standing still (on a mark or after finishing a command).</summary>
-        Idle,
-        /// <summary>Walking with the NavMeshAgent to a target (GoTo or approaching an interactable).</summary>
-        MoveTo,
-        /// <summary>Performing an interaction on an Interactable.</summary>
-        Interact,
-        /// <summary>Running away from a threat.</summary>
-        Flee,
-        /// <summary>Break mode: deterministic list of off-duty behaviours.</summary>
-        OffDuty,
-        /// <summary>Walking back to the starting mark of the take.</summary>
-        ReturnToMark,
-        /// <summary>Funny failure, the take is ruined.</summary>
-        Fail
-    }
-
-    /// <summary>
-    /// One off-duty behaviour: walk to a spot, play an animation for a while (coffee, gossip, catering...).
-    /// </summary>
-    [Serializable]
-    public class OffDutyStep
-    {
-        public Transform spot;
-        [Tooltip("Animator trigger played on arrival. Optional.")]
-        public string animTrigger;
-        public float duration = 5f;
-    }
-
     /// <summary>
     /// Actor state machine (GDD section 7). Knows nothing about cameras or shots – it only executes
     /// commands: <see cref="GoTo"/>, <see cref="Interact"/>, <see cref="FleeFrom"/>, plus the set modes
@@ -46,31 +16,54 @@ namespace MagicJam.Actors
     public class ActorController : MonoBehaviour
     {
         [Header("References")]
-        [SerializeField] private Animator animator;
+        [SerializeField]
+        private Animator animator;
+
         [Tooltip("Where picked-up items are attached. Defaults to the actor root.")]
-        [SerializeField] private Transform handSocket;
+        [SerializeField]
+        private Transform handSocket;
 
         [Header("Interaction")]
         [Tooltip("Max horizontal distance to an interaction point to act without walking first.")]
-        [SerializeField] private float interactRange = 0.75f;
-        [SerializeField] private float interactDuration = 1.5f;
-        [SerializeField] private float failDuration = 2f;
+        [SerializeField]
+        private float interactRange = 0.75f;
+
+        [SerializeField]
+        private float interactDuration = 1.5f;
+
+        [SerializeField]
+        private float failDuration = 2f;
+
         [Tooltip("Degrees per second when turning to face a target while standing.")]
-        [SerializeField] private float turnSpeed = 360f;
+        [SerializeField]
+        private float turnSpeed = 360f;
 
         [Header("Flee")]
-        [SerializeField] private float fleeDistance = 4f;
+        [SerializeField]
+        private float fleeDistance = 4f;
 
         [Header("Off duty (break)")]
-        [SerializeField] private OffDutyStep[] offDutySteps = Array.Empty<OffDutyStep>();
+        [SerializeField]
+        private OffDutyStep[] offDutySteps = Array.Empty<OffDutyStep>();
 
         [Header("Animator parameters (leave empty to skip)")]
-        [SerializeField] private string speedParam = "Speed";
-        [SerializeField] private string pickupTrigger = "PickUp";
-        [SerializeField] private string useTrigger = "Use";
-        [SerializeField] private string talkTrigger = "Talk";
-        [SerializeField] private string physicalTrigger = "Physical";
-        [SerializeField] private string failTrigger = "Fail";
+        [SerializeField]
+        private string speedParam = "Speed";
+
+        [SerializeField]
+        private string pickupTrigger = "PickUp";
+
+        [SerializeField]
+        private string useTrigger = "Use";
+
+        [SerializeField]
+        private string talkTrigger = "Talk";
+
+        [SerializeField]
+        private string physicalTrigger = "Physical";
+
+        [SerializeField]
+        private string failTrigger = "Fail";
 
         private NavMeshAgent agent;
         private readonly HashSet<string> animatorParams = new HashSet<string>();
@@ -422,7 +415,7 @@ namespace MagicJam.Actors
         private void BeginOffDutyStep()
         {
             var step = offDutySteps[offDutyIndex];
-            offDutyWalking = step.spot != null && SetDestination(step.spot.position);
+            offDutyWalking = step.Spot != null && SetDestination(step.Spot.position);
             if (!offDutyWalking)
                 StartOffDutyAnimation(step);
         }
@@ -430,10 +423,10 @@ namespace MagicJam.Actors
         private void StartOffDutyAnimation(OffDutyStep step)
         {
             offDutyWalking = false;
-            stateTimer = step.duration;
-            if (step.spot != null)
-                transform.rotation = Quaternion.Euler(0f, step.spot.eulerAngles.y, 0f);
-            SetAnimatorTrigger(step.animTrigger);
+            stateTimer = step.Duration;
+            if (step.Spot != null)
+                transform.rotation = Quaternion.Euler(0f, step.Spot.eulerAngles.y, 0f);
+            SetAnimatorTrigger(step.AnimTrigger);
         }
 
         private void UpdateOffDuty()

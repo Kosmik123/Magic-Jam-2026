@@ -3,12 +3,13 @@ using UnityEngine;
 namespace MagicJam.Interaction
 {
     /// <summary>
-    /// Non-interactive movement target for the wide shot (doors, passages, floor marks).
+    /// Non-interactive movement target (doors, passages, floor marks).
     /// </summary>
     public class NavPoint : MonoBehaviour
     {
         [Tooltip("Where the actor walks to. Defaults to this transform.")]
-        [SerializeField] private Transform destination;
+        [SerializeField]
+        private Transform destination;
 
         public Transform Destination => destination != null ? destination : transform;
 

@@ -1,45 +1,40 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
 namespace MagicJam.Interaction
 {
-    public enum InteractableType
-    {
-        /// <summary>Picked up on a detail shot.</summary>
-        Pickup,
-        /// <summary>Held item is used on it on an American shot.</summary>
-        Usable,
-        /// <summary>Talk to / examine on a medium shot.</summary>
-        Talkable,
-        /// <summary>Climb / push / jump on a full shot.</summary>
-        Physical,
-        /// <summary>Makes the actor flee when in focus.</summary>
-        Threat
-    }
-
     /// <summary>
-    /// Object the actor can act on. The shot type decides which interaction happens (GDD section 8).
+    /// Object the actor can act on (GDD section 8). An object may carry several Interactables
+    /// (e.g. roommate: Talkable + Usable).
     /// </summary>
     public class Interactable : MonoBehaviour
     {
-        [SerializeField] private InteractableType type;
+        [SerializeField]
+        private InteractableType type;
 
         [Tooltip("Where the actor stands to interact. Defaults to this transform.")]
-        [SerializeField] private Transform interactionPoint;
+        [SerializeField]
+        private Transform interactionPoint;
 
         [Header("Usable")]
-        [Tooltip("Item the actor must hold to use this object. Empty = any item (or none) works.")]
-        [SerializeField] private Interactable requiredItem;
+        [Tooltip("Item the actor must hold to use this object. Empty = any held item works.")]
+        [SerializeField]
+        private Interactable requiredItem;
+
         [Tooltip("Held item is removed from the actor after a successful use.")]
-        [SerializeField] private bool consumeItem = true;
+        [SerializeField]
+        private bool consumeItem = true;
 
         [Header("Talkable")]
         [TextArea]
-        [SerializeField] private string[] lines;
+        [SerializeField]
+        private string[] lines = Array.Empty<string>();
 
         [Header("Events")]
-        [SerializeField] private UnityEvent onInteracted;
+        [SerializeField]
+        private UnityEvent onInteracted;
 
         private int timesInteracted;
 
@@ -47,10 +42,10 @@ namespace MagicJam.Interaction
         public Transform InteractionPoint => interactionPoint != null ? interactionPoint : transform;
         public Interactable RequiredItem => requiredItem;
         public bool ConsumeItem => consumeItem;
-        public string[] Lines => lines;
+        public IReadOnlyList<string> Lines => lines;
         public int TimesInteracted => timesInteracted;
 
-        /// <summary>Raised after a successful interaction. Used by BeatTracker to tick script beats.</summary>
+        /// <summary>Raised after a successful interaction.</summary>
         public event Action<Interactable> Interacted;
 
         /// <summary>True when the given held item satisfies this object's requirement.</summary>
@@ -59,7 +54,7 @@ namespace MagicJam.Interaction
             return requiredItem == null || requiredItem == heldItem;
         }
 
-        /// <summary>Called by the actor when the interaction animation completes.</summary>
+        /// <summary>Called by the actor when the interaction completes.</summary>
         public void NotifyInteracted()
         {
             timesInteracted++;
@@ -67,7 +62,7 @@ namespace MagicJam.Interaction
             Interacted?.Invoke(this);
         }
 
-        /// <summary>Restores interaction count (SnapshotSystem on retake).</summary>
+        /// <summary>Restores the interaction count (e.g. on retake).</summary>
         public void ResetState()
         {
             timesInteracted = 0;
