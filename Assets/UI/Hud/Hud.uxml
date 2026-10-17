@@ -1,0 +1,39 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <ui:Style src="Hud.uss" />
+    <ui:VisualElement name="hud" class="hud hud--cut" picking-mode="Ignore">
+        <ui:VisualElement name="guides" class="guides" picking-mode="Ignore">
+            <ui:VisualElement class="guide guide--vertical guide--third-1" picking-mode="Ignore" />
+            <ui:VisualElement class="guide guide--vertical guide--third-2" picking-mode="Ignore" />
+            <ui:VisualElement class="guide guide--horizontal guide--third-1" picking-mode="Ignore" />
+            <ui:VisualElement class="guide guide--horizontal guide--third-2" picking-mode="Ignore" />
+            <ui:VisualElement name="crosshair" class="crosshair" picking-mode="Ignore">
+                <ui:VisualElement class="crosshair-bar crosshair-bar--h" picking-mode="Ignore" />
+                <ui:VisualElement class="crosshair-bar crosshair-bar--v" picking-mode="Ignore" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:Label name="shotLabel" class="shot-label" text="—" picking-mode="Ignore" />
+        <ui:VisualElement name="status" class="status" picking-mode="Ignore">
+            <ui:VisualElement class="status-row" picking-mode="Ignore">
+                <ui:VisualElement name="modeIcon" class="mode-icon" picking-mode="Ignore">
+                    <ui:VisualElement name="recDot" class="rec-dot" picking-mode="Ignore" />
+                    <ui:VisualElement name="pauseIcon" class="pause-icon" picking-mode="Ignore">
+                        <ui:VisualElement class="pause-bar pause-bar--left" picking-mode="Ignore" />
+                        <ui:VisualElement class="pause-bar" picking-mode="Ignore" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:Label name="timerLabel" class="status-text" text="00:00" picking-mode="Ignore" />
+            </ui:VisualElement>
+            <ui:Label name="retakeLabel" class="status-text retake-label" text="Dubel: 0" picking-mode="Ignore" />
+        </ui:VisualElement>
+        <ui:VisualElement name="scriptPanel" class="script-panel script-panel--hidden" picking-mode="Ignore">
+            <ui:VisualElement name="scriptPaper" class="script-paper" picking-mode="Ignore">
+                <ui:Label class="script-title" text="SCENARIUSZ" picking-mode="Ignore" />
+                <ui:Label name="sceneLabel" class="script-scene" text="Scena 1" picking-mode="Ignore" />
+                <ui:VisualElement name="taskList" class="task-list" picking-mode="Ignore" />
+            </ui:VisualElement>
+            <ui:VisualElement name="scriptTab" class="script-tab" picking-mode="Ignore">
+                <ui:Label class="script-tab-label" text="TAB" picking-mode="Ignore" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

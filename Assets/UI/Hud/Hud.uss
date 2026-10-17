@@ -1,0 +1,254 @@
+:root {
+    --guide-color: rgba(255, 255, 255, 0.35);
+    --hud-text: #ffffff;
+    --rec-red: #e02424;
+    --cut-green: #2ecc71;
+    --paper: #f2ecd9;
+    --paper-text: #2b2620;
+    --paper-muted: #8c8270;
+    --panel-width: 340px;
+}
+
+.hud {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    color: var(--hud-text);
+}
+
+/* Camera guides: rule of thirds + center cross */
+
+.guides {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.guide {
+    position: absolute;
+    background-color: var(--guide-color);
+}
+
+.guide--vertical {
+    top: 0;
+    bottom: 0;
+    width: 1px;
+}
+
+.guide--horizontal {
+    left: 0;
+    right: 0;
+    height: 1px;
+}
+
+.guide--third-1.guide--vertical {
+    left: 33.333%;
+}
+
+.guide--third-2.guide--vertical {
+    left: 66.667%;
+}
+
+.guide--third-1.guide--horizontal {
+    top: 33.333%;
+}
+
+.guide--third-2.guide--horizontal {
+    top: 66.667%;
+}
+
+.crosshair {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 40px;
+    height: 40px;
+    translate: -50% -50%;
+    align-items: center;
+    justify-content: center;
+}
+
+.crosshair-bar {
+    position: absolute;
+    background-color: var(--guide-color);
+}
+
+.crosshair-bar--h {
+    width: 100%;
+    height: 2px;
+}
+
+.crosshair-bar--v {
+    width: 2px;
+    height: 100%;
+}
+
+/* Top center: shot name */
+
+.shot-label {
+    position: absolute;
+    top: 32px;
+    left: 0;
+    right: 0;
+    -unity-text-align: middle-center;
+    font-size: 28px;
+    -unity-font-style: bold;
+    letter-spacing: 2px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+/* Top right: mode icon, shot timer, retake counter */
+
+.status {
+    position: absolute;
+    top: 32px;
+    right: 40px;
+    align-items: flex-end;
+}
+
+.status-row {
+    flex-direction: row;
+    align-items: center;
+}
+
+.mode-icon {
+    width: 32px;
+    height: 32px;
+    margin-right: 12px;
+    align-items: center;
+    justify-content: center;
+}
+
+.rec-dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 14px;
+    background-color: var(--rec-red);
+    transition-duration: 0.15s;
+}
+
+.rec-dot--dim {
+    opacity: 0.25;
+}
+
+.pause-icon {
+    flex-direction: row;
+    height: 28px;
+}
+
+.pause-bar {
+    width: 9px;
+    height: 100%;
+    background-color: var(--cut-green);
+}
+
+.pause-bar--left {
+    margin-right: 8px;
+}
+
+.hud--recording .pause-icon {
+    display: none;
+}
+
+.hud--cut .rec-dot {
+    display: none;
+}
+
+.status-text {
+    font-size: 26px;
+    -unity-font-style: bold;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.retake-label {
+    margin-top: 6px;
+    font-size: 20px;
+}
+
+/* Left: sliding script panel */
+
+.script-panel {
+    position: absolute;
+    left: 0;
+    top: 20%;
+    max-height: 60%;
+    flex-direction: row;
+    align-items: flex-start;
+    transition-duration: 0.3s;
+    transition-timing-function: ease-out-cubic;
+}
+
+.script-panel--hidden {
+    /* USS has no calc(): keep in sync with --panel-width */
+    translate: -340px 0;
+}
+
+.script-paper {
+    width: var(--panel-width);
+    padding: 20px 20px 24px 24px;
+    background-color: var(--paper);
+    color: var(--paper-text);
+    border-bottom-right-radius: 4px;
+}
+
+.script-title {
+    font-size: 22px;
+    -unity-font-style: bold;
+    letter-spacing: 3px;
+    margin-bottom: 4px;
+}
+
+.script-scene {
+    font-size: 15px;
+    color: var(--paper-muted);
+    margin-bottom: 14px;
+}
+
+.script-tab {
+    padding: 10px 8px;
+    background-color: var(--paper);
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+.script-tab-label {
+    color: var(--paper-text);
+    font-size: 14px;
+    -unity-font-style: bold;
+}
+
+.task {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.task-box {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    margin-right: 10px;
+    border-width: 2px;
+    border-color: var(--paper-text);
+    background-color: rgba(0, 0, 0, 0);
+    transition-duration: 0.25s;
+}
+
+.task-label {
+    flex-shrink: 1;
+    font-size: 17px;
+    white-space: normal;
+    transition-duration: 0.25s;
+}
+
+.task--done > .task-box {
+    background-color: var(--paper-text);
+}
+
+.task--done > .task-label {
+    color: var(--paper-muted);
+}
