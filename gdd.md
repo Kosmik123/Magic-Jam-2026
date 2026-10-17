@@ -64,9 +64,11 @@ Kamera ma ograniczenia ruchu w obrębie pokoju (bounding box, bez przenikania pr
 
 Plan jest liczony automatycznie co klatkę na podstawie kadru, względem **aktywnego aktora**.
 
+Wszystkie mechaniki gry opierają się wyłącznie na pracy kamery i planach filmowych – nie ma innych systemów sterowania aktorem.
+
 | Plan | Warunek w kadrze | Akcja aktora |
 |---|---|---|
-| Ogólny | aktor mały w kadrze (< 30% wysokości) | idzie do obiektu w centrum kadru |
+| Ogólny | aktor mały w kadrze (< 30% wysokości) | idzie do obiektu / punktu nawigacyjnego w centrum kadru (eksploracja, przemieszczanie) |
 | Pełny | widać całą postać | akcja fizyczna: wspinaczka, pchnięcie, skok |
 | Amerykański | widać od kolan w górę | użycie trzymanego przedmiotu na obiekcie w kadrze |
 | Średni | widać od pasa w górę | rozmowa z postacią / zbadanie obiektu |
@@ -79,6 +81,12 @@ Plan jest liczony automatycznie co klatkę na podstawie kadru, względem **aktyw
 - Akcja odpala się, gdy plan i obiekt w fokusie są stabilne przez ~0.5 s (żeby nie wywoływać akcji przy przypadkowym ruchu kamery).
 - Wskaźnik planu w rogu wizjera: nazwa planu + ikona akcji, która się wykona.
 - Progi trzymać w jednym `ScriptableObject` (`ShotConfig`) do tuningu.
+
+**Plan ogólny = nawigacja:**
+- Plan ogólny to podstawowe narzędzie eksploracji i poruszania aktora po pomieszczeniach – używany najczęściej, zwłaszcza na początku poziomów.
+- Gracz „prowadzi” aktora, kadrując szeroko z celem (obiekt, drzwi, miejsce) w centrum kadru; aktor idzie tam przez NavMesh.
+- Cele ruchu to nie tylko obiekty interaktywne: także punkty nawigacyjne (drzwi, przejścia, znaczniki na podłodze), żeby można było przemieszczać aktora między strefami pokoju.
+- Pozostałe plany (pełny, amerykański, średni, detal) służą do interakcji, gdy aktor jest już na miejscu.
 
 **Kąty (późniejsze poziomy, opcjonalne):**
 - Żabia perspektywa (kamera nisko, patrzy w górę) – postać w kadrze „silna”.
@@ -108,7 +116,7 @@ Komponent `Interactable` z typem:
 - `Threat` – zagrożenie wywołujące ucieczkę.
 
 Komponenty dodatkowe:
-- `ForcedPerspective` – obiekt, którego „rozmiar w filmie” zależy od rozmiaru na ekranie. Jeśli zajmuje < X% kadru, gdy aktor jest w kadrze, aktor traktuje go jak mały (może go odsunąć). Mechanika-wizytówka.
+- `NavPoint` – nieinteraktywny cel ruchu dla planu ogólnego (drzwi, przejście, znacznik na podłodze).
 - `FilmOnly` – obiekt istnieje (kolizja, zachowanie) tylko wtedy, gdy jest w kadrze w trakcie akcji. Używać oszczędnie, tylko do glitchy i zagrożeń.
 - `CrewSchedule` – lista zdarzeń ekipy w przerwie (czas od początku przerwy → akcja).
 
@@ -198,7 +206,7 @@ Assets/
     Camera/      OperatorCamera (ruch, ograniczenia), ShotDetector (plan + fokus)
     Actors/      ActorController (FSM), ActorCheckpoints, OffDutyBehaviour
     Crew/        CrewSchedule, CrewMember
-    Interaction/ Interactable, ForcedPerspective, FilmOnly
+    Interaction/ Interactable, NavPoint, FilmOnly
     Script/      ScriptPanel, ScriptBeat, BeatTracker (nagrane w kadrze?)
     UI/          ViewfinderUI, ResultsScreen, MainMenu
   Data/          ShotConfig.asset, Levels/*.asset (LevelData)
