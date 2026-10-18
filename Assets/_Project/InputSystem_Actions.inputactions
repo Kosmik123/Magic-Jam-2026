@@ -1064,6 +1064,16 @@
                     "interactions": "",
                     "initialStateCheck": false,
                     "priority": 0
+                },
+                {
+                    "name": "ForceHorizontal",
+                    "type": "Button",
+                    "id": "b4e92d17-8c3a-4f60-a1d5-6e07c9f38b24",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
                 }
             ],
             "bindings": [
@@ -1185,6 +1195,17 @@
                     "processors": "",
                     "groups": "Keyboard&Mouse",
                     "action": "Rotate",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d19f6a82-3b75-4e04-8c2d-f5a0b7e94c61",
+                    "path": "<Keyboard>/shift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "ForceHorizontal",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

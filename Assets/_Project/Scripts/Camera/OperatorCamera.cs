@@ -7,7 +7,7 @@ namespace MagicJam.CameraSystem
     /// <summary>
     /// Free-moving film camera operated by the player.
     /// Input is cached in Update and applied in LateUpdate.
-    /// WASD moves on the horizontal plane, mouse rotates while the middle button is held, Q/E lowers/raises, scroll zooms (changes FOV).
+    /// W/S move along the camera's forward direction (strictly horizontal while Shift is held), A/D strafe, mouse rotates while the rotate button is held, Q/E lowers/raises, scroll zooms (changes FOV).
     /// Movement is clamped to a room bounds box and blocked by colliders on the collision mask.
     /// With a focus set, the camera first turns to face it and only then moves along its own axes as usual,
     /// so W/S approach/retreat and A/D strafe around the focus; rotating with the mouse clears the focus.
@@ -25,6 +25,10 @@ namespace MagicJam.CameraSystem
         [Tooltip("Button that must be held for mouse movement to rotate the camera.")]
         [SerializeField]
         private InputActionReference rotateAction;
+
+        [Tooltip("While held, W/S move strictly horizontally; otherwise they follow the camera's forward direction.")]
+        [SerializeField]
+        private InputActionReference forceHorizontalAction;
 
         [SerializeField]
         private InputActionReference verticalAction;
@@ -143,6 +147,9 @@ namespace MagicJam.CameraSystem
         [ShowNonSerializedField]
         private bool rotateInput;
 
+        [ShowNonSerializedField]
+        private bool forceHorizontalInput;
+
         public Camera Camera => cam;
 
         /// <summary>Focus point the camera is facing, or null in free mode.</summary>
@@ -174,6 +181,7 @@ namespace MagicJam.CameraSystem
             verticalInput = 0f;
             zoomInput = 0f;
             rotateInput = false;
+            forceHorizontalInput = false;
         }
 
         private void Update()
@@ -246,6 +254,7 @@ namespace MagicJam.CameraSystem
             verticalInput = enabled ? Read<float>(verticalAction) : 0f;
             zoomInput = enabled ? Read<float>(zoomAction) : 0f;
             rotateInput = enabled && Read<float>(rotateAction) > 0f;
+            forceHorizontalInput = enabled && Read<float>(forceHorizontalAction) > 0f;
         }
 
         private void SetRotating(bool value)
@@ -283,9 +292,14 @@ namespace MagicJam.CameraSystem
 
         private void UpdateMovement(Vector2 move, float vertical, float dt)
         {
-            // Horizontal movement follows yaw only, so looking up/down doesn't change height.
+            // Sideways movement and forced-horizontal forward movement follow yaw only, so looking up/down
+            // doesn't change height. Otherwise forward/back follows where the camera is looking.
             Quaternion yawRotation = Quaternion.Euler(0f, yaw, 0f);
-            Vector3 targetVelocity = yawRotation * new Vector3(move.x, 0f, move.y) * moveSpeed
+            Vector3 forward = forceHorizontalInput
+                ? yawRotation * Vector3.forward
+                : Quaternion.Euler(pitch, yaw, 0f) * Vector3.forward;
+            Vector3 right = yawRotation * Vector3.right;
+            Vector3 targetVelocity = (right * move.x + forward * move.y) * moveSpeed
                                      + Vector3.up * (vertical * verticalSpeed);
 
             velocity = moveSmoothTime > 0f
@@ -430,7 +444,7 @@ namespace MagicJam.CameraSystem
 
         private void SetActionsEnabled(bool enabled)
         {
-            foreach (InputActionReference reference in new[] { moveAction, lookAction, rotateAction, verticalAction, zoomAction })
+            foreach (InputActionReference reference in new[] { moveAction, lookAction, rotateAction, forceHorizontalAction, verticalAction, zoomAction })
             {
                 if (reference == null || reference.action == null)
                     continue;
