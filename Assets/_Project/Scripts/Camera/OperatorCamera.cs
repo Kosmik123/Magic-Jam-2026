@@ -155,6 +155,9 @@ namespace MagicJam.CameraSystem
         /// <summary>Focus point the camera is facing, or null in free mode.</summary>
         public FocusPoint Focus => focus;
 
+        /// <summary>Current movement velocity in world space.</summary>
+        public Vector3 Velocity => velocity;
+
         /// <summary>When false, input is ignored (e.g. pause menu, scripted finale).</summary>
         public bool InputEnabled { get; set; } = true;
 
