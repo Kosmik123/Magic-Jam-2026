@@ -37,6 +37,10 @@ namespace MagicJam.Actors
         [SerializeField]
         private float bodyRadius = 0.3f;
 
+        [Tooltip("Optional. Gets the interactable's animation trigger when an interaction starts.")]
+        [SerializeField]
+        private Animator animator;
+
         [Header("Hands")]
         [Tooltip("Optional. Moves the hands with IK; without it the timings below are used.")]
         [SerializeField]
@@ -61,6 +65,7 @@ namespace MagicJam.Actors
         private Coroutine interaction;
         private Coroutine release;
         private Hand interactionHand;
+        private int playingTrigger;
 
         public ActorContext Context => context;
 
@@ -129,6 +134,7 @@ namespace MagicJam.Actors
 
             StopCoroutine(interaction);
             interaction = null;
+            StopAnimation();
             Interactable target = CurrentTarget;
             CurrentTarget = null;
             if (handsIK && isActiveAndEnabled)
@@ -153,6 +159,7 @@ namespace MagicJam.Actors
                 movement.Stop();
 
             FaceTarget(target);
+            PlayAnimation(target.AnimationTrigger);
             InteractionStarted?.Invoke(target);
 
             if (handsIK)
@@ -174,8 +181,47 @@ namespace MagicJam.Actors
                 yield return new WaitForSeconds(recoverDelay);
 
             interaction = null;
+            playingTrigger = 0;
             CurrentTarget = null;
             InteractionFinished?.Invoke(target, true);
+        }
+
+        private void PlayAnimation(string trigger)
+        {
+            playingTrigger = 0;
+            if (animator == null || string.IsNullOrEmpty(trigger))
+                return;
+
+            int hash = Animator.StringToHash(trigger);
+            if (HasTrigger(hash) == false)
+            {
+                Debug.LogWarning($"Animator of {name} has no trigger \"{trigger}\".", this);
+                return;
+            }
+
+            playingTrigger = hash;
+            animator.SetTrigger(hash);
+        }
+
+        /// <summary>Clears a trigger that was set but not consumed yet, so a cancelled interaction does not play later.</summary>
+        private void StopAnimation()
+        {
+            if (animator && playingTrigger != 0)
+                animator.ResetTrigger(playingTrigger);
+
+            playingTrigger = 0;
+        }
+
+        private bool HasTrigger(int hash)
+        {
+            AnimatorControllerParameter[] parameters = animator.parameters;
+            for (int i = 0; i < parameters.Length; i++)
+            {
+                if (parameters[i].nameHash == hash && parameters[i].type == AnimatorControllerParameterType.Trigger)
+                    return true;
+            }
+
+            return false;
         }
 
         private void ApplyEffect(Interactable target, Item item)
