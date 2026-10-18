@@ -11,7 +11,10 @@ namespace MagicJam.CameraSystem.Shots
 	/// </summary>
 	public class ShotDetector : MonoBehaviour
 	{
-		/// <summary>Raised when the detected shot changed; the argument is the new shot.</summary>
+		/// <summary>
+		/// Raised when the detected shot or its main subject changed; the argument is the new shot.
+		/// <see cref="ShotTime"/> restarts from 0 at the same moment.
+		/// </summary>
 		public event Action<ShotType> ShotChanged;
 
 		[SerializeField]
@@ -34,13 +37,20 @@ namespace MagicJam.CameraSystem.Shots
 		private float shotStartTime;
 
 		[Header("States")]
-		[SerializeField]
+		[ShowNonSerializedField]
 		private ShotType currentShotType;
+
+		[ShowNonSerializedField]
+		private Frameable mainSubject;
+
 		public ShotType CurrentShotType => currentShotType;
 
-		/// <summary>Seconds the current shot has lasted without changing.</summary>
-		[SerializeField]
-		public float shotTime;
+		/// <summary>Object that decided the current shot and is closest to the frame center; null if none.</summary>
+		public Frameable MainSubject => mainSubject;
+
+		/// <summary>Seconds the current shot has lasted without its type or main subject changing.</summary>
+		[ShowNativeProperty]
+		public float ShotTime => Time.time - shotStartTime;
 
 		/// <summary>Objects that decided the current shot, the one closest to the frame center first.</summary>
 		public IReadOnlyList<Frameable> Subjects => state.Subjects;
@@ -56,7 +66,6 @@ namespace MagicJam.CameraSystem.Shots
 
 		private void Update()
 		{
-			shotTime = Time.time - shotStartTime;
 			if (Time.time < nextEvaluationTime)
 				return;
 
@@ -82,10 +91,13 @@ namespace MagicJam.CameraSystem.Shots
 				}
 			}
 
-			if (detected == currentShotType)
+			IReadOnlyList<Frameable> subjects = state.Subjects;
+			Frameable subject = subjects.Count > 0 ? subjects[0] : null;
+			if (detected == currentShotType && subject == mainSubject)
 				return;
 
 			currentShotType = detected;
+			mainSubject = subject;
 			shotStartTime = Time.time;
 			ShotChanged?.Invoke(detected);
 		}
