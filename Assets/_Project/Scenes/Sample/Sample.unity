@@ -1146,10 +1146,9 @@ MonoBehaviour:
   defaultShotType: 0
   evaluationInterval: 0.1
   classifiers:
+  - rid: 7921577069416808692
   - rid: 7921577069416808690
   - rid: 7921577069416808691
-  currentShotType: 0
-  shotTime: 0
   references:
     version: 2
     RefIds:
@@ -1165,6 +1164,12 @@ MonoBehaviour:
         generalMaxHeight: 0.3
         closeUpFaceMinBodyHeight: 3
         requireAllCharacters: 0
+    - rid: 7921577069416808692
+      type: {class: CameraMovingShotClassifier, ns: MagicJam.CameraSystem.Shots, asm: Assembly-CSharp}
+      data:
+        operatorCamera: {fileID: 330585548}
+        minSpeed: 0.3
+        minTurnRate: 15
 --- !u!4 &1461855438
 Transform:
   m_ObjectHideFlags: 0
@@ -1292,6 +1297,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1365619555}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1660703838 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7446253567937304782, guid: 4dfda494c343a48469264fa504396e12, type: 3}
+  m_PrefabInstance: {fileID: 5612027155738013671}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa90116a6b25ed64f98f6144d5e651bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MagicJam.CameraSystem.Shots.Frameable
 --- !u!114 &1858715913 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1930493216635877091, guid: 4dfda494c343a48469264fa504396e12, type: 3}
@@ -1303,6 +1319,74 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c93b261d91cfa214692c53b3c1d7dd47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MagicJam.CameraSystem.FocusPoint
+--- !u!1 &1866887776
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1866887779}
+  - component: {fileID: 1866887778}
+  - component: {fileID: 1866887777}
+  m_Layer: 0
+  m_Name: ActorContextManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1866887777
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1866887776}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d78edde561394ff44ac4bccb9a2c2457, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MagicJam.Actors.ActorContext
+  inventory:
+    leftHand: {fileID: 0}
+    rightHand: {fileID: 0}
+  rememberedObject: {fileID: 0}
+  activeItem: {fileID: 0}
+  wantsToPutDown: 0
+--- !u!114 &1866887778
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1866887776}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 570b908fc8fb958419f87a99d622c97b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MagicJam.Actors.ActorContextManager
+  context: {fileID: 1866887777}
+  shotDetector: {fileID: 1461855437}
+  modeController: {fileID: 1869722046}
+  actor: {fileID: 1660703838}
+  stableShotTime: 2
+--- !u!4 &1866887779
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1866887776}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1869722045
 GameObject:
   m_ObjectHideFlags: 0
@@ -1641,3 +1725,4 @@ SceneRoots:
   - {fileID: 1358453573}
   - {fileID: 1461855438}
   - {fileID: 1079067976}
+  - {fileID: 1866887779}
