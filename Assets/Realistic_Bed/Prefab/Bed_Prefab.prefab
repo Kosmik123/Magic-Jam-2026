@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4823822851190020}
   - component: {fileID: 33553039302012344}
   - component: {fileID: 23103579875287070}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: pillow2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -101,7 +101,7 @@ GameObject:
   - component: {fileID: 4206221036645350}
   - component: {fileID: 33363125046287748}
   - component: {fileID: 23002938496637960}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: pillow1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -191,7 +191,7 @@ GameObject:
   - component: {fileID: 4870003223008630}
   - component: {fileID: 33497896823669128}
   - component: {fileID: 23603266626339912}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: blanket1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -281,7 +281,7 @@ GameObject:
   - component: {fileID: 4531911423381104}
   - component: {fileID: 33527923700560180}
   - component: {fileID: 23259404120524710}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: bed_sheet1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -371,7 +371,7 @@ GameObject:
   - component: {fileID: 4728833201233900}
   - component: {fileID: 33087279859291750}
   - component: {fileID: 23813979724961958}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: blanket2_MeshPart0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -460,7 +460,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4813155984126450}
   - component: {fileID: 95614327619319890}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Bed_Prefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -521,7 +521,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4805262435171654}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: blanket2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -556,7 +556,7 @@ GameObject:
   - component: {fileID: 4345401310745524}
   - component: {fileID: 33929433905821780}
   - component: {fileID: 23072921599229388}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: headrest1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -646,7 +646,7 @@ GameObject:
   - component: {fileID: 4065584652784094}
   - component: {fileID: 33890428906444694}
   - component: {fileID: 23999966059103892}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: blanket2_MeshPart1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -736,7 +736,7 @@ GameObject:
   - component: {fileID: 4761564511806606}
   - component: {fileID: 33956472090291666}
   - component: {fileID: 23053997058933028}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: pillow3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -827,7 +827,7 @@ GameObject:
   - component: {fileID: 486432121905833536}
   - component: {fileID: 9149409583475076579}
   - component: {fileID: 6407068413295049981}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
