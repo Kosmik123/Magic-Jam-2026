@@ -219,7 +219,7 @@ Transform:
   m_GameObject: {fileID: 6986167365173822459}
   serializedVersion: 2
   m_LocalRotation: {x: 0.00000009362675, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.0000000017462298, y: 0.00000023841858, z: 0.000000014901161}
+  m_LocalPosition: {x: -0.0000000026775524, y: 0.00000023841858, z: 0.000000007450581}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -275,7 +275,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7112235081576371385}
   - component: {fileID: 2520332444498115252}
-  - component: {fileID: 8570972905328724703}
+  - component: {fileID: 3103451082956162717}
   m_Layer: 0
   m_Name: Main Actor
   m_TagString: Untagged
@@ -324,19 +324,28 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 1, z: 0}
---- !u!114 &8570972905328724703
-MonoBehaviour:
+--- !u!95 &3103451082956162717
+Animator:
+  serializedVersion: 7
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7726271659932873403}
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c93b261d91cfa214692c53b3c1d7dd47, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MagicJam.CameraSystem.FocusPoint
-  localOffset: {x: 0, y: 1, z: 0}
+  m_Avatar: {fileID: 9000000, guid: 77e304f285b9f9d44850e310820045c4, type: 3}
+  m_Controller: {fileID: 9100000, guid: d977088380adf1a4a9b0829486bc546f, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 1
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1001 &4800377562591279681
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -389,7 +398,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: Office Worker Model
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1426899662988923390, guid: 680c2dbe950aab54c9cad988bee9c9cb, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
