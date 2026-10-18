@@ -68,9 +68,9 @@ namespace MagicJam.CameraSystem
         private float zoomSmoothTime = 0.1f;
 
         [Header("Focus")]
-        [Tooltip("Optional. While set, the camera turns to face this object before every move, so W/S approach/retreat and A/D strafe around it. Cleared when the camera is rotated with the mouse.")]
+        [Tooltip("Optional. While set, the camera turns to face this focus point before every move, so W/S approach/retreat and A/D strafe around it. Cleared when the camera is rotated with the mouse.")]
         [SerializeField]
-        private Transform focus;
+        private FocusPoint focus;
 
         [Tooltip("Closest the camera can get to the focus (horizontal distance).")]
         [SerializeField]
@@ -128,8 +128,8 @@ namespace MagicJam.CameraSystem
 
         public Camera Camera => cam;
 
-        /// <summary>Object the camera orbits around, or null in free mode.</summary>
-        public Transform Focus => focus;
+        /// <summary>Focus point the camera is facing, or null in free mode.</summary>
+        public FocusPoint Focus => focus;
 
         /// <summary>When false, input is ignored (e.g. pause menu, scripted finale).</summary>
         public bool InputEnabled { get; set; } = true;
@@ -180,9 +180,9 @@ namespace MagicJam.CameraSystem
         /// <summary>
         /// Makes the camera face the target and move relative to it. Passing null returns to free mode.
         /// </summary>
-        /// <param name="target">Object to focus on.</param>
+        /// <param name="target">Focus point to look at.</param>
         /// <param name="smooth">True to turn toward the target over focusTurnSmoothTime, false to snap instantly.</param>
-        public void SetFocus(Transform target, bool smooth = true)
+        public void SetFocus(FocusPoint target, bool smooth = true)
         {
             if (target == null)
             {
@@ -281,9 +281,9 @@ namespace MagicJam.CameraSystem
         {
             Vector3 current = transform.position;
             Vector3 next = current + delta;
-            Vector3 flat = new Vector3(next.x - focus.position.x, 0f, next.z - focus.position.z);
+            Vector3 flat = new Vector3(next.x - focus.Position.x, 0f, next.z - focus.Position.z);
             float distance = flat.magnitude;
-            Vector3 currentFlat = new Vector3(current.x - focus.position.x, 0f, current.z - focus.position.z);
+            Vector3 currentFlat = new Vector3(current.x - focus.Position.x, 0f, current.z - focus.Position.z);
 
             // Already closer than the minimum: don't push the camera out, just don't allow getting closer.
             float limit = Mathf.Min(minFocusDistance, currentFlat.magnitude);
@@ -291,14 +291,14 @@ namespace MagicJam.CameraSystem
                 return delta;
 
             Vector3 direction = distance > 1e-4f ? flat / distance : currentFlat.normalized;
-            next.x = focus.position.x + direction.x * limit;
-            next.z = focus.position.z + direction.z * limit;
+            next.x = focus.Position.x + direction.x * limit;
+            next.z = focus.Position.z + direction.z * limit;
             return next - current;
         }
 
         private void AimAtFocus(float dt)
         {
-            Vector3 direction = focus.position - transform.position;
+            Vector3 direction = focus.Position - transform.position;
             if (direction.sqrMagnitude < 1e-6f)
                 return;
 
