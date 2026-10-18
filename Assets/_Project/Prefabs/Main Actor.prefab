@@ -310,6 +310,7 @@ GameObject:
   - component: {fileID: 2520332444498115252}
   - component: {fileID: 3103451082956162717}
   - component: {fileID: 921380520495717124}
+  - component: {fileID: 2690514414642954937}
   m_Layer: 0
   m_Name: Main Actor
   m_TagString: Untagged
@@ -393,8 +394,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Unity.Animation.Rigging::UnityEngine.Animations.Rigging.RigBuilder
   m_RigLayers:
-  - m_Rig: {fileID: 6800100266783507407}
+  - m_Rig: {fileID: 2690514414642954937}
     m_Active: 1
+  m_Effectors: []
+--- !u!114 &2690514414642954937
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7726271659932873403}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70b342d8ce5c2fd48b8fa3147d48d1d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Animation.Rigging::UnityEngine.Animations.Rigging.Rig
+  m_Weight: 1
   m_Effectors: []
 --- !u!1001 &3549778978378628736
 PrefabInstance:
@@ -409,8 +424,32 @@ PrefabInstance:
       value: Right Hand IK
       objectReference: {fileID: 0}
     - target: {fileID: 3044444251582033162, guid: c38866fc00863804a97c9d794e7b2de9, type: 3}
-      propertyPath: m_LocalPosition.y
+      propertyPath: m_LocalRotation.w
+      value: 0.50000024
+      objectReference: {fileID: 0}
+    - target: {fileID: 3044444251582033162, guid: c38866fc00863804a97c9d794e7b2de9, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.4999999
+      objectReference: {fileID: 0}
+    - target: {fileID: 3044444251582033162, guid: c38866fc00863804a97c9d794e7b2de9, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.5000001
+      objectReference: {fileID: 0}
+    - target: {fileID: 3044444251582033162, guid: c38866fc00863804a97c9d794e7b2de9, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.4999999
+      objectReference: {fileID: 0}
+    - target: {fileID: 3044444251582033162, guid: c38866fc00863804a97c9d794e7b2de9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3044444251582033162, guid: c38866fc00863804a97c9d794e7b2de9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: 3044444251582033162, guid: c38866fc00863804a97c9d794e7b2de9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: -90
       objectReference: {fileID: 0}
     - target: {fileID: 3546766441992237249, guid: c38866fc00863804a97c9d794e7b2de9, type: 3}
       propertyPath: m_Weight
@@ -428,9 +467,13 @@ PrefabInstance:
       propertyPath: m_Data.m_Root
       value: 
       objectReference: {fileID: 7087854917810412109}
-    - target: {fileID: 4416009604391299857, guid: c38866fc00863804a97c9d794e7b2de9, type: 3}
+    - target: {fileID: 4407757967434732694, guid: c38866fc00863804a97c9d794e7b2de9, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4416009604391299857, guid: c38866fc00863804a97c9d794e7b2de9, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 4416009604391299857, guid: c38866fc00863804a97c9d794e7b2de9, type: 3}
       propertyPath: m_LocalPosition.y
@@ -494,6 +537,34 @@ PrefabInstance:
       propertyPath: m_Name
       value: Left Hand IK
       objectReference: {fileID: 0}
+    - target: {fileID: 3044444251582033162, guid: c38866fc00863804a97c9d794e7b2de9, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.5000003
+      objectReference: {fileID: 0}
+    - target: {fileID: 3044444251582033162, guid: c38866fc00863804a97c9d794e7b2de9, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3044444251582033162, guid: c38866fc00863804a97c9d794e7b2de9, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3044444251582033162, guid: c38866fc00863804a97c9d794e7b2de9, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.4999998
+      objectReference: {fileID: 0}
+    - target: {fileID: 3044444251582033162, guid: c38866fc00863804a97c9d794e7b2de9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3044444251582033162, guid: c38866fc00863804a97c9d794e7b2de9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 3044444251582033162, guid: c38866fc00863804a97c9d794e7b2de9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 90
+      objectReference: {fileID: 0}
     - target: {fileID: 3546766441992237249, guid: c38866fc00863804a97c9d794e7b2de9, type: 3}
       propertyPath: m_Weight
       value: 1
@@ -510,9 +581,13 @@ PrefabInstance:
       propertyPath: m_Data.m_Root
       value: 
       objectReference: {fileID: 1008340798441361241}
-    - target: {fileID: 4416009604391299857, guid: c38866fc00863804a97c9d794e7b2de9, type: 3}
+    - target: {fileID: 4407757967434732694, guid: c38866fc00863804a97c9d794e7b2de9, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4416009604391299857, guid: c38866fc00863804a97c9d794e7b2de9, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.3
       objectReference: {fileID: 0}
     - target: {fileID: 4416009604391299857, guid: c38866fc00863804a97c9d794e7b2de9, type: 3}
       propertyPath: m_LocalPosition.y
@@ -627,35 +702,13 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4907076079277858431, guid: 680c2dbe950aab54c9cad988bee9c9cb, type: 3}
       insertIndex: -1
       addedObject: {fileID: 334530414487019860}
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 5715841010066261189, guid: 680c2dbe950aab54c9cad988bee9c9cb, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 6800100266783507407}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 680c2dbe950aab54c9cad988bee9c9cb, type: 3}
 --- !u!4 &470399955084665918 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4907076079277858431, guid: 680c2dbe950aab54c9cad988bee9c9cb, type: 3}
   m_PrefabInstance: {fileID: 4800377562591279681}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &994419107218472580 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5715841010066261189, guid: 680c2dbe950aab54c9cad988bee9c9cb, type: 3}
-  m_PrefabInstance: {fileID: 4800377562591279681}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &6800100266783507407
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 994419107218472580}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 70b342d8ce5c2fd48b8fa3147d48d1d1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Animation.Rigging::UnityEngine.Animations.Rigging.Rig
-  m_Weight: 1
-  m_Effectors: []
 --- !u!4 &1008340798441361241 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5719577473975563544, guid: 680c2dbe950aab54c9cad988bee9c9cb, type: 3}
