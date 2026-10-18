@@ -138,7 +138,10 @@ for (int i = 0; i < n; i++) { Do(i); }        // zbędne klamry i instrukcja w t
 
 - **Eventy (`public event ...`) deklarujemy na samej górze klasy**, przed polami, właściwościami i metodami.
 - Dalej, w tej kolejności: pola serializowane, pozostałe pola prywatne, właściwości, metody.
-- **Stany podglądane w Inspectorze** (pola z `[SerializeField]` mimo że ich serializacja nie ma znaczenia, właściwości z `[ShowNativeProperty]`) grupujemy razem i poprzedzamy nagłówkiem `States`: `[Header("States")]` nad pierwszym polem. `[Header]` działa tylko na polach — gdy blok zaczyna się od właściwości, użyj komentarza `// States`.
+- **Stany podglądane w Inspectorze** to pola i właściwości, które zmieniają się w trakcie gry i chcemy je widzieć do debugowania (np. `isMoving`, `shotTime`).
+  - Pola stanu oznaczamy `[SerializeField]`, choć ich zapis w scenie nie jest potrzebny. **Nie używamy `[ShowNonSerializedField]`**, bo źle się wyświetla.
+  - Właściwości stanu oznaczamy `[ShowNativeProperty]`.
+  - Grupujemy je w jednym bloku po pozostałych polach prywatnych, z nagłówkiem `[Header("States")]` nad pierwszym polem. `[Header]` działa tylko na polach, więc gdy blok zaczyna się od właściwości, użyj komentarza `// States`.
 
 ```csharp
 public class ModeController : MonoBehaviour

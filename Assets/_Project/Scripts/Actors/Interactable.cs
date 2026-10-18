@@ -18,9 +18,16 @@ namespace MagicJam.Actors
         [SerializeField]
         private Transform interactionPoint;
 
+        [Tooltip("Optional. Trigger parameter of the actor's Animator set when the interaction starts, e.g. \"OpenDoor\".")]
+        [SerializeField]
+        private string animationTrigger;
+
         private Frameable frameable;
 
         public float InteractionDistance => interactionDistance;
+
+        /// <summary>Animator trigger the actor plays during the interaction; empty = IK only.</summary>
+        public string AnimationTrigger => animationTrigger;
 
         public Frameable Frameable
         {

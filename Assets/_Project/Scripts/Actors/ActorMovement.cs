@@ -1,5 +1,4 @@
 using System;
-using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -36,7 +35,7 @@ namespace MagicJam.Actors
         private bool pathChecked;
 
         [Header("States")]
-        [ShowNonSerializedField]
+        [SerializeField]
         private bool isMoving;
 
         public bool IsMoving => isMoving;

@@ -1,4 +1,3 @@
-using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -30,16 +29,17 @@ namespace MagicJam.UI
 
         private HudController hud;
 
-        [ShowNonSerializedField]
+        [Header("States")]
+        [SerializeField]
         private bool recording;
 
-        [ShowNonSerializedField]
+        [SerializeField]
         private float shotTime;
 
-        [ShowNonSerializedField]
+        [SerializeField]
         private int retakes;
 
-        [ShowNonSerializedField]
+        [SerializeField]
         private int shotIndex;
 
         private bool[] done;

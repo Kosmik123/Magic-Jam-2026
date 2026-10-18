@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using MagicJam.Core;
-using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
@@ -51,16 +50,16 @@ namespace MagicJam.UI
         [SerializeField]
         private bool isRecording;
 
-        [ShowNonSerializedField]
+        [SerializeField]
         private string shotName = "—";
 
-        [ShowNonSerializedField]
+        [SerializeField]
         private float shotTime;
 
-        [ShowNonSerializedField]
+        [SerializeField]
         private int retakes;
 
-        [ShowNonSerializedField]
+        [SerializeField]
         private string sceneName = "";
 
         private readonly List<string> tasks = new List<string>();
