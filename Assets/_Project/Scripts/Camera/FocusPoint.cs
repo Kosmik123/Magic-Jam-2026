@@ -17,7 +17,7 @@ namespace MagicJam.CameraSystem
         private void OnDrawGizmos()
         {
             Gizmos.color = Color.magenta;
-            Gizmos.DrawWireSphere(Position, 0.1f);
+            Gizmos.DrawSphere(Position, 0.1f);
         }
     }
 }

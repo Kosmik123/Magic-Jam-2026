@@ -411,7 +411,7 @@ Camera:
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 823
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -515,7 +515,7 @@ MonoBehaviour:
   roomBounds: {fileID: 0}
   collisionMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 2832
   collisionRadius: 0.2
   lockCursor: 1
 --- !u!1 &410087039
