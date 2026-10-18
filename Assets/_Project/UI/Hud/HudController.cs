@@ -15,7 +15,7 @@ namespace MagicJam.UI
     [RequireComponent(typeof(UIDocument))]
     public class HudController : MonoBehaviour
     {
-        private const string RecordingClass = "hud--recording";
+		private const string RecordingClass = "hud--recording";
         private const string CutClass = "hud--cut";
         private const string RecDotDimClass = "rec-dot--dim";
         private const string PanelHiddenClass = "script-panel--hidden";

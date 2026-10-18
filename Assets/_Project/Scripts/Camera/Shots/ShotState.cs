@@ -37,7 +37,7 @@ namespace MagicJam.CameraSystem.Shots
         private void Awake()
         {
             if (cam == null)
-                cam = GetComponent<Camera>();
+                cam = Camera.main;
         }
 
         public void Refresh()

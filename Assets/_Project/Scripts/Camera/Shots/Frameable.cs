@@ -68,7 +68,12 @@ namespace MagicJam.CameraSystem.Shots
             all.Clear();
         }
 
-        private void Awake()
+		private void Reset()
+		{
+            renderers = GetComponentsInChildren<Renderer>();
+		}
+
+		private void Awake()
         {
             bool hasExplicitRenderers = boundsRenderers != null && boundsRenderers.Length > 0;
             renderers = hasExplicitRenderers ? boundsRenderers : GetComponentsInChildren<Renderer>();
@@ -83,5 +88,11 @@ namespace MagicJam.CameraSystem.Shots
         {
             all.Remove(this);
         }
-    }
+
+		private void OnDrawGizmosSelected()
+		{
+            Gizmos.color = Color.salmon;
+            Gizmos.DrawWireCube(WorldBounds.center, WorldBounds.size);
+		}
+	}
 }

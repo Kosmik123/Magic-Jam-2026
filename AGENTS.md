@@ -107,6 +107,8 @@ public float moveSpeed = 3f;                    // publiczne pole
 - **Instrukcja po `if` / `for` zawsze w osobnej linijce** — nigdy w tej samej linii co warunek.
 - **Jednolinijkowe ciało `if` / `for` piszemy bez klamer.** Klamry tylko dla ciał wieloliniowych.
 - **Negację w warunkach zapisujemy jako `== false`, nie przez `!`.**
+- **Sprawdzenie czy obiekt dziedziczący z UnityEngine.Object wykonujemy przez skróconą wersję, w której obiekt jest implicit rzutowany na bool**.
+- **Jednak sprawdzenie czy obiekt dziedziczący z UnityEngine.Object nie istnieje, już porównujemy z null**
 
 ```csharp
 if (isActive == false)
@@ -115,7 +117,10 @@ if (isActive == false)
 for (int i = 0; i < actors.Count; i++)
     actors[i].Reset();
 
-if (target != null && target.IsReady == false)
+if (target == null)
+    return;
+
+if (target && target.IsReady == false)
 {
     target.Prepare();
     target.Notify();
