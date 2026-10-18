@@ -6,6 +6,7 @@ namespace MagicJam.CameraSystem
 {
     /// <summary>
     /// Free-moving film camera operated by the player.
+    /// Input is cached in Update and applied in LateUpdate.
     /// WASD moves on the horizontal plane, mouse rotates while the middle button is held, Q/E lowers/raises, scroll zooms (changes FOV).
     /// Movement is clamped to a room bounds box and blocked by colliders on the collision mask.
     /// With a focus set, the camera first turns to face it and only then moves along its own axes as usual,
@@ -126,6 +127,22 @@ namespace MagicJam.CameraSystem
         private float yawSmoothing;
         private float pitchSmoothing;
 
+        // Input is read once per frame in Update and applied in LateUpdate.
+        [ShowNonSerializedField]
+        private Vector2 moveInput;
+
+        [ShowNonSerializedField]
+        private Vector2 lookInput;
+
+        [ShowNonSerializedField]
+        private float verticalInput;
+
+        [ShowNonSerializedField]
+        private float zoomInput;
+
+        [ShowNonSerializedField]
+        private bool rotateInput;
+
         public Camera Camera => cam;
 
         /// <summary>Focus point the camera is facing, or null in free mode.</summary>
@@ -152,25 +169,31 @@ namespace MagicJam.CameraSystem
         {
             SetActionsEnabled(false);
             SetRotating(false);
+            moveInput = Vector2.zero;
+            lookInput = Vector2.zero;
+            verticalInput = 0f;
+            zoomInput = 0f;
+            rotateInput = false;
         }
 
         private void Update()
         {
-            float dt = Time.deltaTime;
-            bool input = InputEnabled;
+            CacheInput();
+            SetRotating(rotateInput);
+        }
 
-            SetRotating(input && Read<float>(rotateAction) > 0f);
-            UpdateRotation(isRotating ? Read<Vector2>(lookAction) : Vector2.zero);
+        private void LateUpdate()
+        {
+            float dt = Time.deltaTime;
+
+            UpdateRotation(isRotating ? lookInput : Vector2.zero);
 
             // Face the focus first, so the movement below is relative to the direction to it.
             if (focus != null)
                 AimAtFocus(dt);
 
-            UpdateZoom(input ? Read<float>(zoomAction) : 0f, dt);
-            UpdateMovement(
-                input ? Read<Vector2>(moveAction) : Vector2.zero,
-                input ? Read<float>(verticalAction) : 0f,
-                dt);
+            UpdateZoom(zoomInput, dt);
+            UpdateMovement(moveInput, verticalInput, dt);
 
             // Keep the focus centered after the move. While still turning to a new focus, the turn above leads.
             if (focus != null && isTurningToFocus == false)
@@ -213,6 +236,16 @@ namespace MagicJam.CameraSystem
             transform.SetPositionAndRotation(ClampToBounds(position), Quaternion.Euler(pitch, yaw, 0f));
             velocity = Vector3.zero;
             velocitySmoothing = Vector3.zero;
+        }
+
+        private void CacheInput()
+        {
+            bool enabled = InputEnabled;
+            moveInput = enabled ? Read<Vector2>(moveAction) : Vector2.zero;
+            lookInput = enabled ? Read<Vector2>(lookAction) : Vector2.zero;
+            verticalInput = enabled ? Read<float>(verticalAction) : 0f;
+            zoomInput = enabled ? Read<float>(zoomAction) : 0f;
+            rotateInput = enabled && Read<float>(rotateAction) > 0f;
         }
 
         private void SetRotating(bool value)
