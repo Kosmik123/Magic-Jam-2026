@@ -73,6 +73,7 @@ namespace MagicJam.CameraSystem.Shots
                 frameable,
                 GetHeightFraction(bounds),
                 GetCenterDistance(bounds),
+                IsVisible(bounds.center, frameable),
                 humanoid && IsVisible(frameable.Head, frameable),
                 humanoid && IsVisible(frameable.Waist, frameable),
                 humanoid && IsVisible(frameable.Knees, frameable),
@@ -114,10 +115,12 @@ namespace MagicJam.CameraSystem.Shots
 
         private bool IsVisible(Transform point, Frameable owner)
         {
-            if (point == null)
-                return false;
+            return point != null && IsVisible(point.position, owner);
+        }
 
-            Vector3 viewport = cam.WorldToViewportPoint(point.position);
+        private bool IsVisible(Vector3 position, Frameable owner)
+        {
+            Vector3 viewport = cam.WorldToViewportPoint(position);
             if (viewport.z <= 0f)
                 return false;
 
@@ -127,7 +130,7 @@ namespace MagicJam.CameraSystem.Shots
 
             bool blocked = Physics.Linecast(
                 cam.transform.position,
-                point.position,
+                position,
                 out RaycastHit hit,
                 occlusionMask,
                 QueryTriggerInteraction.Ignore);

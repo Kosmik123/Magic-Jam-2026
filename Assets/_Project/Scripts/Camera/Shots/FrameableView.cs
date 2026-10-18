@@ -7,6 +7,7 @@ namespace MagicJam.CameraSystem.Shots
             Frameable frameable,
             float heightFraction,
             float centerDistance,
+            bool centerVisible,
             bool headVisible,
             bool waistVisible,
             bool kneesVisible,
@@ -15,6 +16,7 @@ namespace MagicJam.CameraSystem.Shots
             Frameable = frameable;
             HeightFraction = heightFraction;
             CenterDistance = centerDistance;
+            CenterVisible = centerVisible;
             HeadVisible = headVisible;
             WaistVisible = waistVisible;
             KneesVisible = kneesVisible;
@@ -28,6 +30,9 @@ namespace MagicJam.CameraSystem.Shots
 
         /// <summary>Viewport distance from the frame center to the object's center.</summary>
         public float CenterDistance { get; }
+
+        /// <summary>The object's center is in frame and not hidden behind other objects.</summary>
+        public bool CenterVisible { get; }
 
         public bool HeadVisible { get; }
 
