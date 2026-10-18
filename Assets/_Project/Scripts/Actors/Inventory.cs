@@ -30,6 +30,20 @@ namespace MagicJam.Actors
             }
         }
 
+        public Hand NextHand
+        {
+            get
+            {
+                if (rightHand == null)
+                    return Hand.Right;
+
+                if (leftHand == null)
+                    return Hand.Left;
+
+                return Opposite(newestHand);
+            }
+        }
+
         public Item Get(Hand hand)
         {
             return hand == Hand.Left ? leftHand : rightHand;

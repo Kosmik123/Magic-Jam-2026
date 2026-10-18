@@ -14,6 +14,10 @@ namespace MagicJam.Actors
         [SerializeField]
         private float interactionDistance = 0.5f;
 
+        [Tooltip("Where the hand reaches, e.g. a door handle; its rotation is used for the hand. Empty = the point of the bounds closest to the hand.")]
+        [SerializeField]
+        private Transform interactionPoint;
+
         private Frameable frameable;
 
         public float InteractionDistance => interactionDistance;
@@ -33,6 +37,19 @@ namespace MagicJam.Actors
         public Vector3 ClosestPoint(Vector3 position)
         {
             return Frameable.WorldBounds.ClosestPoint(position);
+        }
+
+        /// <summary>Point the hand reaches to; the rotation is null when the hand should keep its own.</summary>
+        public Vector3 GetInteractionPoint(Vector3 handPosition, out Quaternion? rotation)
+        {
+            if (interactionPoint)
+            {
+                rotation = interactionPoint.rotation;
+                return interactionPoint.position;
+            }
+
+            rotation = null;
+            return ClosestPoint(handPosition);
         }
 
         public virtual bool CanInteract(ActorInteractor actor)

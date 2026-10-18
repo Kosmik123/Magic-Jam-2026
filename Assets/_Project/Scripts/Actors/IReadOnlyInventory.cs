@@ -10,6 +10,9 @@ namespace MagicJam.Actors
         /// <summary>Item taken into a hand first, or null if the hands are empty.</summary>
         Item Oldest { get; }
 
+        /// <summary>Hand the next item goes to: a free one (right first), or the one with the oldest item when both are full.</summary>
+        Hand NextHand { get; }
+
         /// <summary>Item held in the hand, or null if the hand is empty.</summary>
         Item Get(Hand hand);
 

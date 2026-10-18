@@ -11,6 +11,7 @@ namespace MagicJam.Actors
     /// <see cref="ActorInteractor"/>. Reacts only while recording and only to shots that contain the actor.
     /// Move shots: walk to the remembered object if it is in frame, otherwise wander to a point near the frame center.
     /// Interaction shots: use the active item on the remembered object, or interact with it, once it is in reach.
+    /// Every interaction clears the remembered object. Cut stops walking and cancels the interaction in progress.
     /// </summary>
     public class ActorBrain : MonoBehaviour
     {
@@ -72,6 +73,12 @@ namespace MagicJam.Actors
 
             if (movement)
                 movement.DestinationUnreachable += OnDestinationUnreachable;
+
+            if (interactor)
+            {
+                interactor.Interacted += OnInteracted;
+                interactor.ItemUsed += OnItemUsed;
+            }
         }
 
         private void OnDisable()
@@ -84,6 +91,12 @@ namespace MagicJam.Actors
 
             if (movement)
                 movement.DestinationUnreachable -= OnDestinationUnreachable;
+
+            if (interactor)
+            {
+                interactor.Interacted -= OnInteracted;
+                interactor.ItemUsed -= OnItemUsed;
+            }
         }
 
         private void Update()
@@ -92,6 +105,9 @@ namespace MagicJam.Actors
                 return;
 
             if (modeController && modeController.IsRecording == false)
+                return;
+
+            if (interactor.IsBusy)
                 return;
 
             ShotType shot = shotDetector.CurrentShotType;
@@ -170,14 +186,11 @@ namespace MagicJam.Actors
             if (IsInFrame(remembered) == false)
                 return false;
 
-            bool interacted = interactor.TryUse(context.ActiveItem, target) || interactor.TryInteract(target);
-            if (interacted == false)
-                return false;
+            bool started = interactor.TryUse(context.ActiveItem, target) || interactor.TryInteract(target);
+            if (started)
+                approachingRememberedObject = false;
 
-            movement.Stop();
-            approachingRememberedObject = false;
-            context.Forget();
-            return true;
+            return started;
         }
 
         private void OnShotChanged(ShotType shot)
@@ -200,6 +213,20 @@ namespace MagicJam.Actors
             approachingRememberedObject = false;
             if (movement)
                 movement.Stop();
+
+            if (interactor)
+                interactor.Cancel();
+        }
+
+        /// <summary>Every interaction clears the memory, on contact; a cancelled reach leaves it intact.</summary>
+        private void OnInteracted(Interactable target)
+        {
+            context.Forget();
+        }
+
+        private void OnItemUsed(Item item, Interactable target)
+        {
+            context.Forget();
         }
 
         private void OnDestinationUnreachable()
