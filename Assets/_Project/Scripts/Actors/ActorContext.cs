@@ -28,13 +28,13 @@ namespace MagicJam.Actors
         private Inventory inventory = new Inventory();
 
         [Header("States")]
-        [ShowNonSerializedField]
+        [SerializeField]
         private Frameable rememberedObject;
 
-        [ShowNonSerializedField]
+        [SerializeField]
         private Item activeItem;
 
-        [ShowNonSerializedField]
+        [SerializeField]
         private bool wantsToPutDown;
 
         /// <summary>Interactive object in the world the actor remembers (another actor, a prop, a door...).</summary>
