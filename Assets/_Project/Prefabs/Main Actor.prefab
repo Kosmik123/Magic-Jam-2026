@@ -482,16 +482,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4416009604391299857, guid: c38866fc00863804a97c9d794e7b2de9, type: 3}
   m_PrefabInstance: {fileID: 3549778978378628736}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &894203845866973718 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4407757967434732694, guid: c38866fc00863804a97c9d794e7b2de9, type: 3}
-  m_PrefabInstance: {fileID: 3549778978378628736}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &1946488279439168394 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3044444251582033162, guid: c38866fc00863804a97c9d794e7b2de9, type: 3}
-  m_PrefabInstance: {fileID: 3549778978378628736}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &4276991141525125016
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -574,16 +564,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4416009604391299857, guid: c38866fc00863804a97c9d794e7b2de9, type: 3}
   m_PrefabInstance: {fileID: 4276991141525125016}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &464271313536590606 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4407757967434732694, guid: c38866fc00863804a97c9d794e7b2de9, type: 3}
-  m_PrefabInstance: {fileID: 4276991141525125016}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &1232549385588316818 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3044444251582033162, guid: c38866fc00863804a97c9d794e7b2de9, type: 3}
-  m_PrefabInstance: {fileID: 4276991141525125016}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &4800377562591279681
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -651,12 +631,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5715841010066261189, guid: 680c2dbe950aab54c9cad988bee9c9cb, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6800100266783507407}
-    - targetCorrespondingSourceObject: {fileID: 6327820861742470520, guid: 680c2dbe950aab54c9cad988bee9c9cb, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1229782868161006470}
-    - targetCorrespondingSourceObject: {fileID: 8202336543335754504, guid: 680c2dbe950aab54c9cad988bee9c9cb, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1699727057366939654}
   m_SourcePrefab: {fileID: 100100000, guid: 680c2dbe950aab54c9cad988bee9c9cb, type: 3}
 --- !u!4 &470399955084665918 stripped
 Transform:
@@ -687,64 +661,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5719577473975563544, guid: 680c2dbe950aab54c9cad988bee9c9cb, type: 3}
   m_PrefabInstance: {fileID: 4800377562591279681}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1535360757962993465 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6327820861742470520, guid: 680c2dbe950aab54c9cad988bee9c9cb, type: 3}
-  m_PrefabInstance: {fileID: 4800377562591279681}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1229782868161006470
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1535360757962993465}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aeda7bfbf984f2a4da5ab4b8967b115d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Animation.Rigging::UnityEngine.Animations.Rigging.TwoBoneIKConstraint
-  m_Weight: 1
-  m_Data:
-    m_Root: {fileID: 1008340798441361241}
-    m_Mid: {fileID: 8109453868945843353}
-    m_Tip: {fileID: 6783600867505988895}
-    m_Target: {fileID: 1232549385588316818}
-    m_Hint: {fileID: 464271313536590606}
-    m_TargetPositionWeight: 1
-    m_TargetRotationWeight: 1
-    m_HintWeight: 1
-    m_MaintainTargetPositionOffset: 0
-    m_MaintainTargetRotationOffset: 0
---- !u!1 &3695995509710360905 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8202336543335754504, guid: 680c2dbe950aab54c9cad988bee9c9cb, type: 3}
-  m_PrefabInstance: {fileID: 4800377562591279681}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1699727057366939654
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3695995509710360905}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aeda7bfbf984f2a4da5ab4b8967b115d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Animation.Rigging::UnityEngine.Animations.Rigging.TwoBoneIKConstraint
-  m_Weight: 1
-  m_Data:
-    m_Root: {fileID: 7087854917810412109}
-    m_Mid: {fileID: 8243898831812597114}
-    m_Tip: {fileID: 8648838171952721942}
-    m_Target: {fileID: 1946488279439168394}
-    m_Hint: {fileID: 894203845866973718}
-    m_TargetPositionWeight: 1
-    m_TargetRotationWeight: 1
-    m_HintWeight: 1
-    m_MaintainTargetPositionOffset: 0
-    m_MaintainTargetRotationOffset: 0
 --- !u!4 &6127443690204049985 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1699915791858665472, guid: 680c2dbe950aab54c9cad988bee9c9cb, type: 3}
