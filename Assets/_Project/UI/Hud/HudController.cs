@@ -30,7 +30,7 @@ namespace MagicJam.UI
         private InputActionReference toggleScriptAction;
 
         [SerializeField]
-        private bool scriptOpenOnStart;
+        private bool isScriptOpen;
 
         [Tooltip("REC dot blink interval in seconds. 0 = no blinking.")]
         [SerializeField]
@@ -47,11 +47,9 @@ namespace MagicJam.UI
         private IVisualElementScheduledItem blinkItem;
 
         // State is cached so it survives UIDocument rebuilds (re-enable, UXML reimport).
-        [ShowNonSerializedField]
-        private bool recording;
-
-        [ShowNonSerializedField]
-        private bool scriptOpen;
+        [Header("States")]
+        [SerializeField]
+        private bool isRecording;
 
         [ShowNonSerializedField]
         private string shotName = "—";
@@ -68,11 +66,10 @@ namespace MagicJam.UI
         private readonly List<string> tasks = new List<string>();
         private readonly List<bool> taskDone = new List<bool>();
 
-        public bool IsScriptOpen => scriptOpen;
+        public bool IsScriptOpen => isScriptOpen;
 
         private void Awake()
         {
-            scriptOpen = scriptOpenOnStart;
             if (modeController == null)
                 modeController = FindAnyObjectByType<ModeController>();
         }
@@ -107,7 +104,7 @@ namespace MagicJam.UI
 
             if (modeController != null)
             {
-                recording = modeController.IsRecording;
+                isRecording = modeController.IsRecording;
                 retakes = modeController.RetakeCount;
                 shotTime = modeController.TakeTime;
 
@@ -138,7 +135,7 @@ namespace MagicJam.UI
         /// <summary>true = Action (REC), false = Cut (pause).</summary>
         public void SetRecording(bool isRecording)
         {
-            recording = isRecording;
+            this.isRecording = isRecording;
             RefreshMode();
         }
 
@@ -195,11 +192,11 @@ namespace MagicJam.UI
 
         public void SetScriptOpen(bool open)
         {
-            scriptOpen = open;
-            scriptPanel?.EnableInClassList(PanelHiddenClass, scriptOpen == false);
+            isScriptOpen = open;
+            scriptPanel?.EnableInClassList(PanelHiddenClass, isScriptOpen == false);
         }
 
-        public void ToggleScript() => SetScriptOpen(scriptOpen == false);
+        public void ToggleScript() => SetScriptOpen(isScriptOpen == false);
 
         private void OnToggleScript(InputAction.CallbackContext _) => ToggleScript();
 
@@ -220,7 +217,7 @@ namespace MagicJam.UI
             SetShotTime(shotTime);
             SetRetakes(retakes);
             SetScene(sceneName);
-            SetScriptOpen(scriptOpen);
+            SetScriptOpen(isScriptOpen);
             RebuildTasks();
         }
 
@@ -229,10 +226,10 @@ namespace MagicJam.UI
             if (hud == null)
                 return;
 
-            hud.EnableInClassList(RecordingClass, recording);
-            hud.EnableInClassList(CutClass, recording == false);
+            hud.EnableInClassList(RecordingClass, isRecording);
+            hud.EnableInClassList(CutClass, isRecording == false);
             recDot.RemoveFromClassList(RecDotDimClass);
-            if (recording) 
+            if (isRecording) 
                 blinkItem?.Resume();
             else 
                 blinkItem?.Pause();
