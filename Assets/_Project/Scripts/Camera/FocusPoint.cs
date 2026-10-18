@@ -14,7 +14,7 @@ namespace MagicJam.CameraSystem
 
         public Vector3 Position => transform.TransformPoint(localOffset);
 
-        private void OnDrawGizmos()
+        private void OnDrawGizmosSelected()
         {
             Gizmos.color = Color.magenta;
             Gizmos.DrawSphere(Position, 0.1f);

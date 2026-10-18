@@ -49,6 +49,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -3347090507751969436, guid: 77e304f285b9f9d44850e310820045c4, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -3347090507751969436, guid: 77e304f285b9f9d44850e310820045c4, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: ad29e37877665544795b30d5e08a54f0, type: 2}
@@ -57,12 +61,24 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -2140489104560634966, guid: 77e304f285b9f9d44850e310820045c4, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -2140489104560634966, guid: 77e304f285b9f9d44850e310820045c4, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 02714a83938951f4a86c0243f5a9dd05, type: 2}
     - target: {fileID: -1781628882611861087, guid: 77e304f285b9f9d44850e310820045c4, type: 3}
       propertyPath: m_CastShadows
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -1781628882611861087, guid: 77e304f285b9f9d44850e310820045c4, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -1206874426333947015, guid: 77e304f285b9f9d44850e310820045c4, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -1206874426333947015, guid: 77e304f285b9f9d44850e310820045c4, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -73,13 +89,25 @@ PrefabInstance:
       value: Office Worker Model
       objectReference: {fileID: 0}
     - target: {fileID: 1790424977916772818, guid: 77e304f285b9f9d44850e310820045c4, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1790424977916772818, guid: 77e304f285b9f9d44850e310820045c4, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: cd8fc0868d96eff4c87403d229bb5c0a, type: 2}
     - target: {fileID: 2236237030686087061, guid: 77e304f285b9f9d44850e310820045c4, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2236237030686087061, guid: 77e304f285b9f9d44850e310820045c4, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 500354d3e0a6d2e4d9a9feb00771cf25, type: 2}
+    - target: {fileID: 4320098735860348617, guid: 77e304f285b9f9d44850e310820045c4, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4320098735860348617, guid: 77e304f285b9f9d44850e310820045c4, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -89,9 +117,17 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6597751313198110293, guid: 77e304f285b9f9d44850e310820045c4, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6597751313198110293, guid: 77e304f285b9f9d44850e310820045c4, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 02714a83938951f4a86c0243f5a9dd05, type: 2}
+    - target: {fileID: 6801738708157864337, guid: 77e304f285b9f9d44850e310820045c4, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6801738708157864337, guid: 77e304f285b9f9d44850e310820045c4, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
