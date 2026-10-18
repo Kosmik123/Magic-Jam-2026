@@ -22,12 +22,19 @@ namespace MagicJam.Actors
         [SerializeField]
         private string animationTrigger;
 
+        [Tooltip("Optional. Extra action the actor performs during the interaction, e.g. moving along a path.")]
+        [SerializeField]
+        private InteractionAction action;
+
         private Frameable frameable;
 
         public float InteractionDistance => interactionDistance;
 
         /// <summary>Animator trigger the actor plays during the interaction; empty = IK only.</summary>
         public string AnimationTrigger => animationTrigger;
+
+        /// <summary>Extra action the actor performs during the interaction, or null.</summary>
+        public InteractionAction Action => action;
 
         public Frameable Frameable
         {

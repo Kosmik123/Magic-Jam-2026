@@ -9,6 +9,7 @@ namespace MagicJam.Actors
     /// picking up and putting down items. Works only when the object is within reach. Decides nothing.
     /// An interaction takes time: the hand reaches the object, the effect happens on contact
     /// (<see cref="Interacted"/> / <see cref="ItemUsed"/>), then the hand returns (<see cref="InteractionFinished"/>).
+    /// An object with an <see cref="InteractionAction"/> also runs it, and the interaction lasts until the action ends.
     /// </summary>
     public class ActorInteractor : MonoBehaviour
     {
@@ -66,8 +67,12 @@ namespace MagicJam.Actors
         private Coroutine release;
         private Hand interactionHand;
         private int playingTrigger;
+        private InteractionAction runningAction;
+        private Coroutine actionRoutine;
 
         public ActorContext Context => context;
+
+        public ActorMovement Movement => movement;
 
         /// <summary>The actor is performing an interaction and cannot start another.</summary>
         public bool IsBusy => interaction != null;
@@ -77,7 +82,7 @@ namespace MagicJam.Actors
 
         private void OnDisable()
         {
-            Cancel();
+            Abort();
         }
 
         /// <summary>Horizontal distance from the actor's body to the object's bounds.</summary>
@@ -126,14 +131,42 @@ namespace MagicJam.Actors
             return true;
         }
 
-        /// <summary>Stops the interaction in progress; the hand returns to the animated pose.</summary>
+        /// <summary>
+        /// Stops the interaction in progress; the hand returns to the animated pose.
+        /// Does nothing while an action that is not <see cref="InteractionAction.Interruptible"/> runs.
+        /// </summary>
         public void Cancel()
+        {
+            if (runningAction && runningAction.Interruptible == false)
+                return;
+
+            Abort();
+        }
+
+        private IEnumerator RunAction(InteractionAction action)
+        {
+            yield return action.Perform(this);
+            runningAction = null;
+            actionRoutine = null;
+        }
+
+        private void Abort()
         {
             if (interaction == null)
                 return;
 
             StopCoroutine(interaction);
             interaction = null;
+            if (runningAction)
+            {
+                if (actionRoutine != null)
+                    StopCoroutine(actionRoutine);
+
+                runningAction.Stop(this);
+                runningAction = null;
+                actionRoutine = null;
+            }
+
             StopAnimation();
             Interactable target = CurrentTarget;
             CurrentTarget = null;
@@ -162,23 +195,42 @@ namespace MagicJam.Actors
             PlayAnimation(target.AnimationTrigger);
             InteractionStarted?.Invoke(target);
 
-            if (handsIK)
+            InteractionAction action = target.Action;
+            if (action)
             {
-                Vector3 point = target.GetInteractionPoint(handsIK.GetHandPosition(hand), out Quaternion? rotation);
-                yield return handsIK.Reach(hand, point, rotation);
-            }
-            else
-            {
-                yield return new WaitForSeconds(contactDelay);
+                SetAnimatorBool(action.AnimatorBool, action.AnimatorBoolValue);
+                runningAction = action;
+                actionRoutine = StartCoroutine(RunAction(action));
             }
 
-            if (target)
+            bool reaches = action == null || action.UsesHands;
+            if (reaches)
+            {
+                if (handsIK)
+                {
+                    Vector3 point = target.GetInteractionPoint(handsIK.GetHandPosition(hand), out Quaternion? rotation);
+                    yield return handsIK.Reach(hand, point, rotation);
+                }
+                else
+                {
+                    yield return new WaitForSeconds(contactDelay);
+                }
+
+                if (target)
+                    ApplyEffect(target, item);
+
+                if (handsIK)
+                    yield return handsIK.Release(hand);
+                else
+                    yield return new WaitForSeconds(recoverDelay);
+            }
+
+            while (runningAction != null)
+                yield return null;
+
+            // Without the hands there is no contact; the action ending is the moment the interaction takes effect.
+            if (reaches == false && target)
                 ApplyEffect(target, item);
-
-            if (handsIK)
-                yield return handsIK.Release(hand);
-            else
-                yield return new WaitForSeconds(recoverDelay);
 
             interaction = null;
             playingTrigger = 0;
@@ -193,7 +245,7 @@ namespace MagicJam.Actors
                 return;
 
             int hash = Animator.StringToHash(trigger);
-            if (HasTrigger(hash) == false)
+            if (HasParameter(hash, AnimatorControllerParameterType.Trigger) == false)
             {
                 Debug.LogWarning($"Animator of {name} has no trigger \"{trigger}\".", this);
                 return;
@@ -201,6 +253,21 @@ namespace MagicJam.Actors
 
             playingTrigger = hash;
             animator.SetTrigger(hash);
+        }
+
+        private void SetAnimatorBool(string parameter, bool value)
+        {
+            if (animator == null || string.IsNullOrEmpty(parameter))
+                return;
+
+            int hash = Animator.StringToHash(parameter);
+            if (HasParameter(hash, AnimatorControllerParameterType.Bool) == false)
+            {
+                Debug.LogWarning($"Animator of {name} has no bool \"{parameter}\".", this);
+                return;
+            }
+
+            animator.SetBool(hash, value);
         }
 
         /// <summary>Clears a trigger that was set but not consumed yet, so a cancelled interaction does not play later.</summary>
@@ -212,12 +279,12 @@ namespace MagicJam.Actors
             playingTrigger = 0;
         }
 
-        private bool HasTrigger(int hash)
+        private bool HasParameter(int hash, AnimatorControllerParameterType type)
         {
             AnimatorControllerParameter[] parameters = animator.parameters;
             for (int i = 0; i < parameters.Length; i++)
             {
-                if (parameters[i].nameHash == hash && parameters[i].type == AnimatorControllerParameterType.Trigger)
+                if (parameters[i].nameHash == hash && parameters[i].type == type)
                     return true;
             }
 

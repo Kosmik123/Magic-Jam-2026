@@ -23,6 +23,12 @@ namespace MagicJam.Actors
         [SerializeField]
         private UnityEvent<Item> itemUsed;
 
+        /// <summary>Turns interacting on or off, e.g. from <c>interacted</c> to make a one-time interaction.</summary>
+        public void SetInteractable(bool value)
+        {
+            interactable = value;
+        }
+
         public override bool CanInteract(ActorInteractor actor)
         {
             return interactable;
