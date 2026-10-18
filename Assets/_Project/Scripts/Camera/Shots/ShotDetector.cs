@@ -37,10 +37,10 @@ namespace MagicJam.CameraSystem.Shots
 		private float shotStartTime;
 
 		[Header("States")]
-		[ShowNonSerializedField]
+		[SerializeField]
 		private ShotType currentShotType;
 
-		[ShowNonSerializedField]
+		[SerializeField]
 		private Frameable mainSubject;
 
 		/// <summary>What the camera sees, refreshed before every detection.</summary>

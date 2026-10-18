@@ -1,6 +1,5 @@
 using MagicJam.CameraSystem.Shots;
 using MagicJam.Core;
-using NaughtyAttributes;
 using UnityEngine;
 
 namespace MagicJam.Actors
@@ -34,7 +33,7 @@ namespace MagicJam.Actors
         private float recordingStartTime;
 
         [Header("States")]
-        [ShowNonSerializedField]
+        [SerializeField]
         private bool shotApplied;
 
         public float StableShotTime => stableShotTime;

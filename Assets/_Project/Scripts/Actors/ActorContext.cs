@@ -1,6 +1,5 @@
 using System;
 using MagicJam.CameraSystem.Shots;
-using NaughtyAttributes;
 using UnityEngine;
 
 namespace MagicJam.Actors

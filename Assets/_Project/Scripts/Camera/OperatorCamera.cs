@@ -1,4 +1,3 @@
-using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -105,49 +104,47 @@ namespace MagicJam.CameraSystem
         private const float TurnDoneAngle = 0.1f;
 
         private Camera cam;
-
-        [ShowNonSerializedField]
-        private float yaw;
-
-        [ShowNonSerializedField]
-        private float pitch;
-
-        [ShowNonSerializedField]
-        private Vector3 velocity;
-
         private Vector3 velocitySmoothing;
-
-        [ShowNonSerializedField]
-        private float targetFov;
-
         private float fovSmoothing;
-
-        [ShowNonSerializedField]
-        private bool isRotating;
-
-        [ShowNonSerializedField]
-        private bool isTurningToFocus;
-
         private float yawSmoothing;
         private float pitchSmoothing;
 
+        [Header("States")]
+        [SerializeField]
+        private float yaw;
+
+        [SerializeField]
+        private float pitch;
+
+        [SerializeField]
+        private Vector3 velocity;
+
+        [SerializeField]
+        private float targetFov;
+
+        [SerializeField]
+        private bool isRotating;
+
+        [SerializeField]
+        private bool isTurningToFocus;
+
         // Input is read once per frame in Update and applied in LateUpdate.
-        [ShowNonSerializedField]
+        [SerializeField]
         private Vector2 moveInput;
 
-        [ShowNonSerializedField]
+        [SerializeField]
         private Vector2 lookInput;
 
-        [ShowNonSerializedField]
+        [SerializeField]
         private float verticalInput;
 
-        [ShowNonSerializedField]
+        [SerializeField]
         private float zoomInput;
 
-        [ShowNonSerializedField]
+        [SerializeField]
         private bool rotateInput;
 
-        [ShowNonSerializedField]
+        [SerializeField]
         private bool forceHorizontalInput;
 
         public Camera Camera => cam;
