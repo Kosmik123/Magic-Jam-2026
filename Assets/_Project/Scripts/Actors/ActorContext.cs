@@ -72,10 +72,17 @@ namespace MagicJam.Actors
             Remember(null);
         }
 
-        /// <summary>Takes the item into a free hand and makes it the active item. Returns false if both hands are full.</summary>
-        public bool TryPickUp(Item item)
+        /// <summary>Forgets the remembered object and the active item; the items stay in the hands.</summary>
+        public void ClearFocus()
         {
-            if (inventory.TryAdd(item, out _) == false)
+            Forget();
+            SetActiveItem(null);
+        }
+
+        /// <summary>Takes the item into a free hand and makes it the active item. Returns false if both hands are full.</summary>
+        public bool TryPickUp(Item item, out Hand hand)
+        {
+            if (inventory.TryAdd(item, out hand) == false)
                 return false;
 
             InventoryChanged?.Invoke();

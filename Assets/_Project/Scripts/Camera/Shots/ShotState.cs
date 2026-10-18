@@ -56,6 +56,22 @@ namespace MagicJam.CameraSystem.Shots
             visible.Sort((a, b) => a.CenterDistance.CompareTo(b.CenterDistance));
         }
 
+        /// <summary>Returns true and the view of the frameable if it is in the camera frustum.</summary>
+        public bool TryGetView(Frameable frameable, out FrameableView view)
+        {
+            for (int i = 0; i < visible.Count; i++)
+            {
+                if (visible[i].Frameable != frameable)
+                    continue;
+
+                view = visible[i];
+                return true;
+            }
+
+            view = default;
+            return false;
+        }
+
         public void ClearSubjects()
         {
             subjects.Clear();

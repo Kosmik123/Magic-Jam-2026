@@ -43,6 +43,9 @@ namespace MagicJam.CameraSystem.Shots
 		[ShowNonSerializedField]
 		private Frameable mainSubject;
 
+		/// <summary>What the camera sees, refreshed before every detection.</summary>
+		public ShotState State => state;
+
 		public ShotType CurrentShotType => currentShotType;
 
 		/// <summary>Object that decided the current shot and is closest to the frame center; null if none.</summary>

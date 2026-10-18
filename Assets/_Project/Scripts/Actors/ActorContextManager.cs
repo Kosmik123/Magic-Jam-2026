@@ -9,7 +9,7 @@ namespace MagicJam.Actors
     /// Changes the <see cref="ActorContext"/> based on the shot from <see cref="ShotDetector"/>. A shot changes
     /// the context once, after it has lasted <see cref="StableShotTime"/> seconds while recording:
     /// a close-up on a held item makes it the active item, a close-up on any other object makes the actor
-    /// remember it, a close-up on the actor's face makes it forget the remembered object.
+    /// remember it, a close-up on the actor's face makes it forget both the remembered object and the active item.
     /// </summary>
     public class ActorContextManager : MonoBehaviour
     {
@@ -23,7 +23,7 @@ namespace MagicJam.Actors
         [SerializeField]
         private ModeController modeController;
 
-        [Tooltip("The actor the context belongs to. A close-up on its face clears the remembered object. Empty = any face.")]
+        [Tooltip("The actor the context belongs to. A close-up on its face clears the remembered object and the active item. Empty = any face.")]
         [SerializeField]
         private Frameable actor;
 
@@ -91,7 +91,7 @@ namespace MagicJam.Actors
 
                 case ShotType.CloseUpFace:
                     if (actor == null || subject == actor)
-                        context.Forget();
+                        context.ClearFocus();
                     break;
             }
         }
