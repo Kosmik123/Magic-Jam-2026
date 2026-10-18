@@ -80,9 +80,12 @@ namespace MagicJam.Actors
             return true;
         }
 
-        /// <summary>Takes the item into a free hand. Returns false if both hands are full.</summary>
+        /// <summary>Takes the item into a hand. With both hands full, the item taken first is dropped before.</summary>
         public bool PickUp(Item item)
         {
+            if (context.Inventory.IsFull && context.Inventory.Contains(item) == false)
+                PutDown(context.Inventory.Oldest);
+
             if (context.TryPickUp(item, out Hand hand) == false)
                 return false;
 

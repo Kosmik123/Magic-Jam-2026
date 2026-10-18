@@ -13,9 +13,22 @@ namespace MagicJam.Actors
         [SerializeField]
         private Item rightHand;
 
+        private Hand newestHand = Hand.Right;
+
         public bool IsFull => leftHand && rightHand;
 
         public bool IsEmpty => leftHand == null && rightHand == null;
+
+        public Item Oldest
+        {
+            get
+            {
+                if (IsFull)
+                    return Get(Opposite(newestHand));
+
+                return leftHand ? leftHand : rightHand;
+            }
+        }
 
         public Item Get(Hand hand)
         {
@@ -55,6 +68,7 @@ namespace MagicJam.Actors
 
             hand = rightHand == null ? Hand.Right : Hand.Left;
             Set(hand, item);
+            newestHand = hand;
             return true;
         }
 
@@ -66,6 +80,11 @@ namespace MagicJam.Actors
 
             Set(hand, null);
             return true;
+        }
+
+        private static Hand Opposite(Hand hand)
+        {
+            return hand == Hand.Left ? Hand.Right : Hand.Left;
         }
 
         private void Set(Hand hand, Item item)

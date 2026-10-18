@@ -185,9 +185,12 @@ namespace MagicJam.Actors
             shotHandled = false;
         }
 
+        /// <summary>
+        /// Cut stops the actor and drops its destination. Back in Action the actor reacts only to a shot that
+        /// changed during the Cut, so cutting mid-walk and recording again without moving the camera keeps it standing.
+        /// </summary>
         private void OnModeChanged(FilmMode mode)
         {
-            shotHandled = false;
             if (mode == FilmMode.Action)
             {
                 recordingStartTime = Time.time;

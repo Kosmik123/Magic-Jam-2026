@@ -7,6 +7,9 @@ namespace MagicJam.Actors
 
         bool IsEmpty { get; }
 
+        /// <summary>Item taken into a hand first, or null if the hands are empty.</summary>
+        Item Oldest { get; }
+
         /// <summary>Item held in the hand, or null if the hand is empty.</summary>
         Item Get(Hand hand);
 
