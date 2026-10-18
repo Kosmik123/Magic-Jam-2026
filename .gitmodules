@@ -1,0 +1,3 @@
+[submodule "Assets/Mackysoft/SerializeReferenceExtensions"]
+	path = Assets/Mackysoft/SerializeReferenceExtensions
+	url = https://github.com/Kosmik123/Unity-SerializeReferenceExtensions
