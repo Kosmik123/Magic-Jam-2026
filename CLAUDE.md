@@ -1,2 +1,2 @@
-@HOUSE_RULES.md
+@BIPOLAR_RULES.md
 @AGENTS.md

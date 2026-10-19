@@ -4,7 +4,7 @@ Instrukcje dla agentów AI (Claude Code, Codex, Copilot itp.) i dla ludzi dołą
 
 ## Wspólne zasady
 
-**Najpierw przeczytaj [HOUSE_RULES.md](HOUSE_RULES.md)** — zasady komunikacji (pytanie ≠ polecenie) i styl kodu C#. Ten plik zawiera tylko to, co specyficzne dla projektu.
+**Najpierw przeczytaj [BIPOLAR_RULES.md](BIPOLAR_RULES.md)** — zasady komunikacji (pytanie ≠ polecenie) i styl kodu C#. Ten plik zawiera tylko to, co specyficzne dla projektu.
 
 ## O projekcie
 

@@ -1,6 +1,6 @@
-# HOUSE_RULES.md — wspólne zasady pracy z agentami
+# BIPOLAR_RULES.md — wspólne zasady studia Bipolar
 
-Uniwersalne zasady komunikacji i stylu kodu, wspólne dla wszystkich naszych projektów Unity.
+Uniwersalne zasady komunikacji i stylu kodu, wspólne dla wszystkich projektów Unity studia Bipolar.
 Instrukcje specyficzne dla projektu są w `AGENTS.md` (lub odpowiedniku) danego repozytorium.
 
 > **Nie edytuj tego pliku w trakcie pracy w repozytorium.** To kopia wspólnego szablonu dodawanego
