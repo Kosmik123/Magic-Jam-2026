@@ -1,1 +1,2 @@
+@HOUSE_RULES.md
 @AGENTS.md
