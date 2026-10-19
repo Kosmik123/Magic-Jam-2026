@@ -1,1 +1,2 @@
+@BIPOLAR_RULES.md
 @AGENTS.md
