@@ -165,4 +165,4 @@ public class ModeController : MonoBehaviour
 
 ### Input
 
-Używamy **nowego Input Systemu**. Komponenty przyjmują akcje przez `[SerializeField] InputActionReference` (zgodnie z regułą atrybutu powyżej pola). Nie używaj starego `UnityEngine.Input`.
+Używamy **Input Systemu** (pakiet `com.unity.inputsystem`). Nazywamy go „Input System”, nie „nowy Input System”. Komponenty przyjmują akcje przez `[SerializeField] InputActionReference` (zgodnie z regułą atrybutu powyżej pola). Nie używaj starego `UnityEngine.Input`.

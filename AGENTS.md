@@ -9,7 +9,7 @@ Instrukcje dla agentów AI (Claude Code, Codex, Copilot itp.) i dla ludzi dołą
 ## O projekcie
 
 - **Gra:** „Cięcie!” (robocza nazwa) — Game Jam 24h, temat *Beyond Reality*. Opis gry, mechaniki i zakres: [gdd.md](gdd.md). Przeczytaj GDD przed implementowaniem nowych mechanik.
-- **Silnik:** Unity 6 (`6000.3.26f1`), URP, nowy Input System, C#.
+- **Silnik:** Unity 6 (`6000.3.26f1`), URP, Input System, C#.
 - **Namespace bazowy:** `MagicJam` (np. `MagicJam.CameraSystem`).
 
 ## Struktura folderów
