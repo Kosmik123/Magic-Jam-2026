@@ -74,7 +74,6 @@ public float moveSpeed = 3f;                    // publiczne pole
 ```csharp
 public event Action Retaken;
 public event Action<FilmMode> ModeChanged;
-
 ```
 
 ```csharp
