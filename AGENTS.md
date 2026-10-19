@@ -4,7 +4,7 @@ Instrukcje dla agentów AI (Claude Code, Codex, Copilot itp.) i dla ludzi dołą
 
 ## Wspólne zasady
 
-**Najpierw przeczytaj [BIPOLAR_RULES.md](BIPOLAR_RULES.md)** — zasady komunikacji (pytanie ≠ polecenie) i styl kodu C#. Ten plik zawiera tylko to, co specyficzne dla projektu.
+**Najpierw przeczytaj [BIPOLAR_RULES.md](BIPOLAR_RULES.md)** — zasady komunikacji (pytanie ≠ polecenie), struktura folderów i styl kodu C#. Ten plik zawiera tylko to, co specyficzne dla projektu.
 
 ## O projekcie
 
@@ -14,22 +14,9 @@ Instrukcje dla agentów AI (Claude Code, Codex, Copilot itp.) i dla ludzi dołą
 
 ## Struktura folderów
 
-```
-Assets/
-├── _Project/            ← WSZYSTKIE pliki naszej gry
-│   ├── Scenes/
-│   ├── Scripts/         ← podfoldery wg systemów (Camera/, Actors/, ...)
-│   ├── Settings/        ← assety URP, profile Volume
-│   └── InputSystem_Actions.inputactions
-└── <ZewnętrznaBiblioteka>/  ← paczki z Asset Store / zewnętrzne biblioteki
-```
+Ogólna struktura (`Assets/_Project/` + zewnętrzne biblioteki w `Assets/`) jest opisana w [BIPOLAR_RULES.md](BIPOLAR_RULES.md). W tym projekcie:
 
-Zasady:
-
-- **Nasze pliki trafiają wyłącznie do `Assets/_Project/`.** Nowe skrypty, sceny, prefaby, materiały, tekstury, audio — wszystko tam, w odpowiednim podfolderze.
-- **Bezpośrednio w `Assets/` leżą tylko zewnętrzne biblioteki** (Asset Store, pluginy, importowane paczki). Nie twórz tam własnych plików.
-- **Nie modyfikuj zewnętrznych bibliotek.** Jeśli trzeba zmienić ich zachowanie — rozszerz je (wrapper, dziedziczenie, adapter) w `Assets/_Project/`.
-- Namespace odpowiada folderowi pod `Scripts/` (np. `Scripts/Camera/` → `MagicJam.CameraSystem`).
+- Podfoldery `Scripts/` wg systemów, np. `Scripts/Camera/` → `MagicJam.CameraSystem`, `Scripts/Audio/` → `MagicJam.AudioSystem`.
 
 ## Pliki `.meta`
 

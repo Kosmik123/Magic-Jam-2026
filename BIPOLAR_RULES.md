@@ -1,6 +1,6 @@
 # BIPOLAR_RULES.md — wspólne zasady studia Bipolar Games
 
-Uniwersalne zasady komunikacji i stylu kodu, wspólne dla wszystkich projektów Unity studia Bipolar.
+Uniwersalne zasady komunikacji, struktury projektu i stylu kodu, wspólne dla wszystkich projektów Unity studia Bipolar.
 Instrukcje specyficzne dla projektu są w `AGENTS.md` (lub odpowiedniku) danego repozytorium.
 
 > **Nie edytuj tego pliku w trakcie pracy w repozytorium.** To kopia wspólnego szablonu dodawanego
@@ -13,6 +13,24 @@ Instrukcje specyficzne dla projektu są w `AGENTS.md` (lub odpowiedniku) danego 
 - **Gdy użytkownik zadaje pytanie, odpowiedz na nie i nic nie zmieniaj.** Nie edytuj plików, nie commituj, nie wprowadzaj zmian „przy okazji”. Czytać kod wolno, żeby odpowiedzieć.
 - **Działaj dopiero na wyraźne polecenie** („zrób”, „dodaj”, „popraw”, „zacommituj” itp.).
 - Jeśli w odpowiedzi proponujesz zmianę, opisz ją i poczekaj na decyzję.
+
+## Struktura folderów
+
+```
+Assets/
+├── _Project/            ← WSZYSTKIE pliki projektu
+│   ├── Scenes/
+│   ├── Scripts/         ← podfoldery wg systemów (Camera/, Actors/, ...)
+│   └── Settings/        ← assety URP, profile Volume
+└── <ZewnętrznaBiblioteka>/  ← paczki z Asset Store / zewnętrzne biblioteki
+```
+
+Zasady:
+
+- **Nasze pliki trafiają wyłącznie do `Assets/_Project/`.** Nowe skrypty, sceny, prefaby, materiały, tekstury, audio — wszystko tam, w odpowiednim podfolderze.
+- **Bezpośrednio w `Assets/` leżą tylko zewnętrzne biblioteki** (Asset Store, pluginy, importowane paczki). Nie twórz tam własnych plików.
+- **Nie modyfikuj zewnętrznych bibliotek.** Jeśli trzeba zmienić ich zachowanie — rozszerz je (wrapper, dziedziczenie, adapter) w `Assets/_Project/`.
+- Namespace odpowiada folderowi pod `Scripts/` (patrz „Styl kodu C#”).
 
 ## Styl kodu C#
 
