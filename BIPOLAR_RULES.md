@@ -156,6 +156,19 @@ for (int i = 0; i < n; i++) { Do(i); }        // zbędne klamry i instrukcja w t
 
 - **Eventy (`public event ...`) deklarujemy na samej górze klasy**, przed polami, właściwościami i metodami.
 - Dalej, w tej kolejności: pola serializowane, pozostałe pola prywatne, właściwości, metody.
+- **Właściwość, która dotyczy tylko jednego pola** (zwraca je lub ustawia), często stoi **zaraz pod tym polem**. Właściwości korzystające z kilku pól są niżej, w bloku właściwości.
+
+```csharp
+[SerializeField]
+private float moveSpeed = 3f;
+public float MoveSpeed => moveSpeed;
+
+[SerializeField]
+private float sprintMultiplier = 2f;
+
+public float SprintSpeed => moveSpeed * sprintMultiplier;
+```
+
 - **Stany podglądane w Inspectorze** to pola i właściwości, które zmieniają się w trakcie gry i chcemy je widzieć do debugowania (np. `isMoving`, `shotTime`).
   - Pola stanu oznaczamy `[SerializeField]`, choć ich zapis w scenie nie jest potrzebny. **Nie używamy `[ShowNonSerializedField]`**, bo źle się wyświetla.
   - Właściwości stanu oznaczamy `[ShowNativeProperty]`.
