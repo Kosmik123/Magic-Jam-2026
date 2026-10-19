@@ -65,6 +65,25 @@ public float moveSpeed = 3f;                    // publiczne pole
 - **Interface Segregation:** małe, wąskie interfejsy (`IInteractable`, a nie `IEverything`).
 - Komunikacja między systemami przez zdarzenia (`event Action<...>`) zamiast bezpośrednich wywołań w obie strony.
 
+### Eventy
+
+- **Event bez argumentów lub z jednym argumentem — zwykły `Action` / `Action<T>`.**
+- **Od dwóch argumentów w górę — własny delegat**, żeby każdy argument miał nazwę. Zgodnie z zasadą „jeden typ publiczny na plik” delegat leży we własnym pliku.
+
+```csharp
+public event Action Retaken;
+public event Action<FilmMode> ModeChanged;
+
+public delegate void DamageTakenHandler(float amount, Vector3 hitPoint);
+public event DamageTakenHandler DamageTaken;
+```
+
+Źle:
+
+```csharp
+public event Action<float, Vector3> DamageTaken;  // co oznacza float, a co Vector3?
+```
+
 ### Konwencje nazewnicze
 
 - Klasy, metody, właściwości, eventy: `PascalCase`.
