@@ -1,4 +1,4 @@
-# BIPOLAR_RULES.md — wspólne zasady studia Bipolar
+# BIPOLAR_RULES.md — wspólne zasady studia Bipolar Games
 
 Uniwersalne zasady komunikacji i stylu kodu, wspólne dla wszystkich projektów Unity studia Bipolar.
 Instrukcje specyficzne dla projektu są w `AGENTS.md` (lub odpowiedniku) danego repozytorium.
@@ -134,7 +134,3 @@ public class ModeController : MonoBehaviour
     private void Awake() { ... }
 }
 ```
-
-### Input
-
-Używamy **nowego Input Systemu**. Komponenty przyjmują akcje przez `[SerializeField] InputActionReference` (zgodnie z regułą atrybutu powyżej pola). Nie używaj starego `UnityEngine.Input`.
