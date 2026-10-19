@@ -62,8 +62,8 @@ public float moveSpeed = 3f;                    // publiczne pole
 
 - **Single Responsibility:** jeden `MonoBehaviour` = jedna odpowiedzialność. Zamiast jednego wielkiego managera — kilka małych komponentów.
 - **Open/Closed, Dependency Inversion:** zależności przez interfejsy lub referencje ustawiane w Inspectorze (`[SerializeField]`), nie przez `FindObjectOfType` / `GameObject.Find` w runtime.
-- **Interface Segregation:** małe, wąskie interfejsy (`IInteractable`, a nie `IEverything`).
-- Komunikacja między systemami przez zdarzenia (`event Action<...>`) zamiast bezpośrednich wywołań w obie strony.
+- **Interface Segregation:** małe, wąskie interfejsy (`IInteractive`, a nie `IEverything`).
+- Komunikacja między systemami przez zdarzenia (`event Action<...>`) zamiast bezpośrednich wywołań w obie strony i cyklicznych zależności.
 
 ### Eventy
 
@@ -165,4 +165,4 @@ public class ModeController : MonoBehaviour
 
 ### Input
 
-Używamy **Input Systemu** (pakiet `com.unity.inputsystem`). Nazywamy go „Input System”, nie „nowy Input System”. Komponenty przyjmują akcje przez `[SerializeField] InputActionReference` (zgodnie z regułą atrybutu powyżej pola).
+**Input Systemu** (pakiet `com.unity.inputsystem`) nazywamy „Input System”, nie „nowy Input System”. Jeśli go używamy to komponenty przyjmują akcje przez `[SerializeField] InputActionReference` (zgodnie z regułą atrybutu powyżej pola). 
