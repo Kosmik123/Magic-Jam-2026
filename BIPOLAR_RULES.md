@@ -68,14 +68,23 @@ public float moveSpeed = 3f;                    // publiczne pole
 ### Eventy
 
 - **Event bez argumentów lub z jednym argumentem — zwykły `Action` / `Action<T>`.**
-- **Od dwóch argumentów w górę — własny delegat**, żeby każdy argument miał nazwę. Zgodnie z zasadą „jeden typ publiczny na plik” delegat leży we własnym pliku.
+- **Od dwóch argumentów w górę — własny delegat**, żeby każdy argument miał nazwę.
+- Delegat nie potrzebuje osobnego pliku. Jeśli event z tym delegatem wywołuje jedna klasa, deklarujemy delegat w jej pliku.
 
 ```csharp
 public event Action Retaken;
 public event Action<FilmMode> ModeChanged;
 
+```
+
+```csharp
+// Health.cs — delegat w pliku jedynej klasy, która wywołuje ten event
 public delegate void DamageTakenHandler(float amount, Vector3 hitPoint);
-public event DamageTakenHandler DamageTaken;
+
+public class Health : MonoBehaviour
+{
+    public event DamageTakenHandler DamageTaken;
+}
 ```
 
 Źle:
@@ -90,7 +99,8 @@ public event Action<float, Vector3> DamageTaken;  // co oznacza float, a co Vect
 - Pola prywatne i zmienne lokalne: `camelCase` (bez prefiksu `_` / `m_`).
 - Stałe: `PascalCase` (`private const float Skin = 0.01f;`).
 - Interfejsy z prefiksem `I`.
-- Jeden typ publiczny na plik, nazwa pliku = nazwa klasy (wymóg Unity dla `MonoBehaviour`/`ScriptableObject`).
+- **`MonoBehaviour` i `ScriptableObject` — zawsze we własnym pliku, nazwa pliku = nazwa klasy** (wymóg Unity).
+- Pozostałe typy publiczne (zwykłe klasy, struktury, enumy, delegaty) mogą dzielić plik, gdy są ze sobą ściśle powiązane.
 - Komentarze i nazwy w kodzie po angielsku; `<summary>` dla publicznych klas i nieoczywistych członków.
 
 ### Formatowanie instrukcji
